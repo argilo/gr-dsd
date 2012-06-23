@@ -22,7 +22,7 @@
 ########################################################################
 include(GrPlatform) #define LIB_SUFFIX
 
-add_library(gnuradio-howto SHARED howto_square_ff.cc howto_square2_ff.cc)
+add_library(gnuradio-howto SHARED howto_square_ff.cc howto_square2_ff.cc ../dsd/dmr_data.c ../dsd/dmr_voice.c ../dsd/dsd_audio.c ../dsd/dsd_dibit.c ../dsd/dsd_file.c ../dsd/dsd_frame.c ../dsd/dsd_frame_sync.c ../dsd/dsd_main.c ../dsd/dsd_mbe.c ../dsd/dsd_serial.c ../dsd/dsd_symbol.c ../dsd/dsd_upsample.c ../dsd/dstar.c ../dsd/nxdn96.c ../dsd/nxdn_data.c ../dsd/nxdn_voice.c ../dsd/p25_lcw.c ../dsd/p25p1_hdu.c ../dsd/p25p1_ldu1.c ../dsd/p25p1_ldu2.c ../dsd/p25p1_tdulc.c ../dsd/provoice.c ../dsd/x2tdma_data.c ../dsd/x2tdma_voice.c)
 target_link_libraries(gnuradio-howto ${Boost_LIBRARIES} ${GRUEL_LIBRARIES} ${GNURADIO_CORE_LIBRARIES})
 set_target_properties(gnuradio-howto PROPERTIES DEFINE_SYMBOL "gnuradio_howto_EXPORTS")
 

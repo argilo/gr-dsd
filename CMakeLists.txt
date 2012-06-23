@@ -99,6 +99,7 @@ endif()
 ########################################################################
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/dsd
     ${Boost_INCLUDE_DIRS}
     ${GRUEL_INCLUDE_DIRS}
     ${GNURADIO_CORE_INCLUDE_DIRS}
