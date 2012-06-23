@@ -79,7 +79,15 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
           state->jitter = -1;
         }
 
-      result = read (opts->audio_in_fd, &sample, 2);
+      if (opts->gnuradio)
+        {
+          // Blah.
+        }
+      else
+        {
+          result = read (opts->audio_in_fd, &sample, 2);
+        }
+
       if ((sample > state->max) && (have_sync == 1) && (state->rf_mod == 0))
         {
           sample = state->max;
