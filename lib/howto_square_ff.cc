@@ -31,7 +31,10 @@
 
 #include <howto_square_ff.h>
 #include <gr_io_signature.h>
-#include <dsd.h>
+
+extern "C" {
+  #include <dsd.h>
+}
 
 /*
  * Create a new instance of howto_square_ff and return

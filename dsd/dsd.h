@@ -221,10 +221,10 @@ void printFrameSync (dsd_opts * opts, dsd_state * state, char *frametype, int of
 int getFrameSync (dsd_opts * opts, dsd_state * state);
 int comp (const void *a, const void *b);
 void noCarrier (dsd_opts * opts, dsd_state * state);
-void initOpts (dsd_opts * opts);
-void initState (dsd_state * state);
+extern void initOpts (dsd_opts * opts);
+extern void initState (dsd_state * state);
 void usage ();
-void liveScanner (dsd_opts * opts, dsd_state * state);
+extern void liveScanner (dsd_opts * opts, dsd_state * state);
 void cleanupAndExit (dsd_opts * opts, dsd_state * state);
 void sigfun (int sig);
 int main (int argc, char **argv);
