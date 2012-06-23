@@ -63,6 +63,10 @@ private:
 
   friend HOWTO_API howto_square_ff_sptr howto_make_square_ff ();
 
+  pthread_mutex_t mutex;
+  int dsd_in_len;
+  int dsd_out_len;
+
   /*!
    * \brief square a stream of floats.
    */
@@ -70,6 +74,9 @@ private:
 
  public:
   ~howto_square_ff ();	// public destructor
+
+  void forecast (int noutput_items,
+                 gr_vector_int &ninput_items_required);
 
   // Where all the action really happens
 

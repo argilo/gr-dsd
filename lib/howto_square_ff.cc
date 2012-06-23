@@ -61,10 +61,20 @@ static const int MAX_OUT = 1;	// maximum number of output streams
  */
 howto_square_ff::howto_square_ff ()
   : gr_block ("square_ff",
-	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (float)),
-	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (float)))
+	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (short)),
+	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (short)))
 {
-  // nothing else required in this example
+  // Initialize the mutex
+  if(pthread_mutex_init(&mutex, NULL))
+  {
+//    printf("Unable to initialize a mutex\n");
+  }
+  pthread_mutex_lock(&mutex);
+  pthread_t dsd_thread;
+//  if(pthread_create(&dsd_thread, NULL, &opponent, NULL))
+//  {
+//    printf("Unable to spawn thread\n");
+//  }  
 }
 
 /*
@@ -75,14 +85,22 @@ howto_square_ff::~howto_square_ff ()
   // nothing else required in this example
 }
 
+void
+howto_square_ff::forecast (int noutput_items,
+                           gr_vector_int &ninput_items_required)
+{
+  // Input rate is 48000, output rate is 8000.
+  ninput_items_required[0] = noutput_items * 6;
+}
+
 int
 howto_square_ff::general_work (int noutput_items,
 			       gr_vector_int &ninput_items,
 			       gr_vector_const_void_star &input_items,
 			       gr_vector_void_star &output_items)
 {
-  const float *in = (const float *) input_items[0];
-  float *out = (float *) output_items[0];
+  const short *in = (const short *) input_items[0];
+  short *out = (short *) output_items[0];
 
   for (int i = 0; i < noutput_items; i++){
     out[i] = in[i] * in[i];
