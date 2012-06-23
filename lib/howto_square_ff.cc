@@ -71,7 +71,9 @@ howto_square_ff::howto_square_ff ()
   initOpts (&opts);
   initState (&state);
 
-  opts.gnuradio = 1;
+  opts.split = 1;
+  opts.playoffset = 0;
+  opts.delay = 0;
 
   // Hard-code Provoice options (-fp) for now.
   opts.frame_dstar = 0;
@@ -111,6 +113,7 @@ howto_square_ff::howto_square_ff ()
   }
   pthread_mutex_lock(&mutex);
   pthread_t dsd_thread;
+  liveScanner (&opts, &state);
 //  if(pthread_create(&dsd_thread, NULL, &opponent, NULL))
 //  {
 //    printf("Unable to spawn thread\n");
