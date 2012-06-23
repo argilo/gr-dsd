@@ -32,10 +32,6 @@
 #include <howto_square_ff.h>
 #include <gr_io_signature.h>
 
-extern "C" {
-  #include <dsd.h>
-}
-
 /*
  * Create a new instance of howto_square_ff and return
  * a boost shared_ptr.  This is effectively the public constructor.
@@ -60,6 +56,13 @@ static const int MAX_IN = 1;	// maximum number of input streams
 static const int MIN_OUT = 1;	// minimum number of output streams
 static const int MAX_OUT = 1;	// maximum number of output streams
 
+void* run_dsd (void *arg)
+{
+  dsd_params *params = (dsd_params *) arg;
+  liveScanner (&params->opts, &params->state);
+  return NULL;
+}
+
 /*
  * The private constructor
  */
@@ -68,59 +71,56 @@ howto_square_ff::howto_square_ff ()
 	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (short)),
 	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (short)))
 {
-  dsd_opts opts;
-  dsd_state state;
+  initOpts (&params.opts);
+  initState (&params.state);
 
-  initOpts (&opts);
-  initState (&state);
-
-  opts.split = 1;
-  opts.playoffset = 0;
-  opts.delay = 0;
+  params.opts.split = 1;
+  params.opts.playoffset = 0;
+  params.opts.delay = 0;
 
   // Hard-code Provoice options (-fp) for now.
-  opts.frame_dstar = 0;
-  opts.frame_x2tdma = 0;
-  opts.frame_p25p1 = 0;
-  opts.frame_nxdn48 = 0;
-  opts.frame_nxdn96 = 0;
-  opts.frame_dmr = 0;
-  opts.frame_provoice = 1;
-  state.samplesPerSymbol = 5;
-  state.symbolCenter = 2;
-  opts.mod_c4fm = 0;
-  opts.mod_qpsk = 0;
-  opts.mod_gfsk = 1;
-  state.rf_mod = 2;
+  params.opts.frame_dstar = 0;
+  params.opts.frame_x2tdma = 0;
+  params.opts.frame_p25p1 = 0;
+  params.opts.frame_nxdn48 = 0;
+  params.opts.frame_nxdn96 = 0;
+  params.opts.frame_dmr = 0;
+  params.opts.frame_provoice = 1;
+  params.state.samplesPerSymbol = 5;
+  params.state.symbolCenter = 2;
+  params.opts.mod_c4fm = 0;
+  params.opts.mod_qpsk = 0;
+  params.opts.mod_gfsk = 1;
+  params.state.rf_mod = 2;
   printf ("Setting symbol rate to 9600 / second\n");
   printf ("Enabling only GFSK modulation optimizations.\n");
   printf ("Decoding only ProVoice frames.\n");
 
   // Hard-code unvoiced quality (-u 10) for now.
-  opts.uvquality = 10;
+  params.opts.uvquality = 10;
 
   // Hard-code verbosity (-v 1) for now.
-  opts.verbose = 1;
+  params.opts.verbose = 1;
 
   // Hard-code GFSK optimizations (-mg) for now.
-  opts.mod_c4fm = 0;
-  opts.mod_qpsk = 0;
-  opts.mod_gfsk = 1;
-  state.rf_mod = 2;
+  params.opts.mod_c4fm = 0;
+  params.opts.mod_qpsk = 0;
+  params.opts.mod_gfsk = 1;
+  params.state.rf_mod = 2;
   printf ("Enabling only GFSK modulation optimizations.\n");
 
   // Initialize the mutex
   if(pthread_mutex_init(&mutex, NULL))
   {
-//    printf("Unable to initialize a mutex\n");
+    printf("Unable to initialize a mutex\n");
   }
   pthread_mutex_lock(&mutex);
+
   pthread_t dsd_thread;
-  liveScanner (&opts, &state);
-//  if(pthread_create(&dsd_thread, NULL, &opponent, NULL))
-//  {
-//    printf("Unable to spawn thread\n");
-//  }  
+  if(pthread_create(&dsd_thread, NULL, &run_dsd, &params))
+  {
+    printf("Unable to spawn thread\n");
+  }  
 }
 
 /*

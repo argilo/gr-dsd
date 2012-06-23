@@ -82,7 +82,7 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
       if (opts->audio_in_fd == -1)
         {
           // Blah.
-          printf("Getting audio sample.\n");
+          sample = 0;
         }
       else
         {

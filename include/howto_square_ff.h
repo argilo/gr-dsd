@@ -25,6 +25,17 @@
 #include <howto_api.h>
 #include <gr_block.h>
 
+extern "C"
+{
+  #include <dsd.h>
+}
+
+typedef struct
+{
+  dsd_opts opts;
+  dsd_state state;
+} dsd_params;
+
 class howto_square_ff;
 
 /*
@@ -63,6 +74,7 @@ private:
 
   friend HOWTO_API howto_square_ff_sptr howto_make_square_ff ();
 
+  dsd_params params;
   pthread_mutex_t mutex;
   int dsd_in_len;
   int dsd_out_len;
