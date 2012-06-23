@@ -79,7 +79,7 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
           state->jitter = -1;
         }
 
-      if (opts->gnuradio)
+      if (opts->audio_in_fd == -1)
         {
           // Blah.
         }

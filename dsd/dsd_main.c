@@ -128,7 +128,6 @@ initOpts (dsd_opts * opts)
   opts->msize = 15;
   opts->playfiles = 0;
   opts->delay = 0;
-  opts->gnuradio = 0;
 }
 
 void

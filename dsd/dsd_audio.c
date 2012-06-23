@@ -190,7 +190,7 @@ playSynthesizedVoice (dsd_opts * opts, dsd_state * state)
   if (state->audio_out_idx > opts->delay)
     {
       // output synthesized speech to sound card
-      if (opts->gnuradio)
+      if (opts->audio_out_fd == -1)
         {
           // Blah.
         }
@@ -214,9 +214,6 @@ playSynthesizedVoice (dsd_opts * opts, dsd_state * state)
 void
 openAudioOutDevice (dsd_opts * opts, int speed)
 {
-  if (opts->gnuradio) {
-    return;
-  }
 
 #ifdef SOLARIS
   sample_info_t aset, aget;
@@ -287,9 +284,6 @@ openAudioOutDevice (dsd_opts * opts, int speed)
 void
 openAudioInDevice (dsd_opts * opts)
 {
-  if (opts->gnuradio) {
-    return;
-  }
 
 #ifdef SOLARIS
   sample_info_t aset, aget;

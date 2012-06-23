@@ -93,7 +93,6 @@ typedef struct
   int msize;
   int playfiles;
   int delay;
-  int gnuradio;
 } dsd_opts;
 
 typedef struct
