@@ -31,6 +31,7 @@
 
 #include <howto_square_ff.h>
 #include <gr_io_signature.h>
+#include <dsd.h>
 
 /*
  * Create a new instance of howto_square_ff and return
@@ -64,6 +65,45 @@ howto_square_ff::howto_square_ff ()
 	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (short)),
 	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (short)))
 {
+  dsd_opts opts;
+  dsd_state state;
+
+  initOpts (&opts);
+  initState (&state);
+
+  opts.gnuradio = 1;
+
+  // Hard-code Provoice options (-fp) for now.
+  opts.frame_dstar = 0;
+  opts.frame_x2tdma = 0;
+  opts.frame_p25p1 = 0;
+  opts.frame_nxdn48 = 0;
+  opts.frame_nxdn96 = 0;
+  opts.frame_dmr = 0;
+  opts.frame_provoice = 1;
+  state.samplesPerSymbol = 5;
+  state.symbolCenter = 2;
+  opts.mod_c4fm = 0;
+  opts.mod_qpsk = 0;
+  opts.mod_gfsk = 1;
+  state.rf_mod = 2;
+  printf ("Setting symbol rate to 9600 / second\n");
+  printf ("Enabling only GFSK modulation optimizations.\n");
+  printf ("Decoding only ProVoice frames.\n");
+
+  // Hard-code unvoiced quality (-u 10) for now.
+  opts.uvquality = 10;
+
+  // Hard-code verbosity (-v 1) for now.
+  opts.verbose = 1;
+
+  // Hard-code GFSK optimizations (-mg) for now.
+  opts.mod_c4fm = 0;
+  opts.mod_qpsk = 0;
+  opts.mod_gfsk = 1;
+  state.rf_mod = 2;
+  printf ("Enabling only GFSK modulation optimizations.\n");
+
   // Initialize the mutex
   if(pthread_mutex_init(&mutex, NULL))
   {

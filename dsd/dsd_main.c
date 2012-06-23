@@ -344,14 +344,11 @@ main (int argc, char **argv)
   exitflag = 0;
   signal (SIGINT, sigfun);
 
-  while ((c = getopt (argc, argv, "hep:qstv:z:i:o:d:g:nw:B:C:R:f:m:u:x:A:S:M:r:G")) != -1)
+  while ((c = getopt (argc, argv, "hep:qstv:z:i:o:d:g:nw:B:C:R:f:m:u:x:A:S:M:r")) != -1)
     {
       opterr = 0;
       switch (c)
         {
-        case 'G':
-          opts.gnuradio = 1;
-          break;
         case 'h':
           usage ();
           exit (0);
