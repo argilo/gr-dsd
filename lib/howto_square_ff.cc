@@ -141,7 +141,9 @@ howto_square_ff::howto_square_ff ()
   if(pthread_create(&dsd_thread, NULL, &run_dsd, &params))
   {
     printf("Unable to spawn thread\n");
-  }  
+  }
+
+  params.state.input_length = 0;
 }
 
 /*
@@ -185,6 +187,7 @@ howto_square_ff::general_work (int noutput_items,
 
   params.state.input_samples = (const short *) input_items[0];
   params.state.input_length = ninput_items[0];
+  printf("general_work -> input samples: %d\n", params.state.input_length);
 
   printf("general_work -> signaling\n");
   if (pthread_cond_signal(&params.state.input_ready))
