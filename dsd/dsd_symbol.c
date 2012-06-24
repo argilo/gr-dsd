@@ -81,8 +81,26 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
 
       if (opts->audio_in_fd == -1)
         {
-          // Blah.
-          sample = 0;
+          while (state->input_length == 0)
+            {
+              // If the buffer is empty, wait for more samples to arrive.
+              printf("getSymbol -> Waiting for condition.\n");
+              if (pthread_cond_wait(&state->input_ready, &state->input_mutex))
+                {
+                  printf("getSymbol -> Error waiting for condition\n");
+                }
+              printf("getSymbol -> Notified.\n");
+              state->input_offset = 0;
+            }
+          // Get the next sample from the buffer.
+          sample = state->input_samples[state->input_offset++];
+          //printf("getSymbol --> sample=%d\n", sample);
+          if (state->input_offset == state->input_length)
+            {
+              // We've reached the end of the buffer.  Wait for more next time.
+              printf("getSymbol -> End of buffer.\n");
+              state->input_length = 0;
+            }
         }
       else
         {

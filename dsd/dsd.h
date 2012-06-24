@@ -159,6 +159,12 @@ typedef struct
   mbe_parms *cur_mp;
   mbe_parms *prev_mp;
   mbe_parms *prev_mp_enhanced;
+
+  pthread_mutex_t input_mutex;
+  pthread_cond_t input_ready;
+  const short *input_samples;
+  int input_length;
+  int input_offset;
 } dsd_state;
 
 /*

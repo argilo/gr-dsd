@@ -110,11 +110,10 @@ howto_square_ff::howto_square_ff ()
   printf ("Enabling only GFSK modulation optimizations.\n");
 
   // Initialize the mutex
-  if(pthread_mutex_init(&mutex, NULL))
+  if(pthread_mutex_init(&params.state.input_mutex, NULL))
   {
     printf("Unable to initialize a mutex\n");
   }
-  pthread_mutex_lock(&mutex);
 
   pthread_t dsd_thread;
   if(pthread_create(&dsd_thread, NULL, &run_dsd, &params))
@@ -145,17 +144,40 @@ howto_square_ff::general_work (int noutput_items,
 			       gr_vector_const_void_star &input_items,
 			       gr_vector_void_star &output_items)
 {
-  const short *in = (const short *) input_items[0];
   short *out = (short *) output_items[0];
 
+  printf("general_work -> locking mutex\n");
+  if (pthread_mutex_lock(&params.state.input_mutex))
+    {
+      printf("Unable to lock mutex\n");
+    }
+  printf("general_work -> mutex locked\n");
+
+  params.state.input_samples = (const short *) input_items[0];
+  params.state.input_length = ninput_items[0];
+
+  printf("general_work -> signaling\n");
+  if (pthread_cond_signal(&params.state.input_ready))
+    {
+      printf("Unable to signal\n");
+    }
+  printf("general_work -> signaled\n");
+
+  printf("general_work -> unlocking mutex\n");
+  if (pthread_mutex_unlock(&params.state.input_mutex))
+    {
+      printf("Unable to unlock mutex\n");
+    }
+  printf("general_work -> mutex unlocked\n");
+
   for (int i = 0; i < noutput_items; i++){
-    out[i] = in[i] * in[i];
+    out[i] = 0;
   }
 
   // Tell runtime system how many input items we consumed on
   // each input stream.
 
-  consume_each (noutput_items);
+  consume (0, ninput_items[0]);
 
   // Tell runtime system how many output items we produced.
   return noutput_items;

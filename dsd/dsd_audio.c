@@ -193,6 +193,7 @@ playSynthesizedVoice (dsd_opts * opts, dsd_state * state)
       if (opts->audio_out_fd == -1)
         {
           // Blah.
+          printf("playSynthesizedVoice -> Output sound...\n");
         }
       else
         {

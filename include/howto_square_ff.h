@@ -75,9 +75,6 @@ private:
   friend HOWTO_API howto_square_ff_sptr howto_make_square_ff ();
 
   dsd_params params;
-  pthread_mutex_t mutex;
-  int dsd_in_len;
-  int dsd_out_len;
 
   /*!
    * \brief square a stream of floats.

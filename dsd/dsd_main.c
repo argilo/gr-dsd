@@ -283,6 +283,14 @@ usage ()
 void
 liveScanner (dsd_opts * opts, dsd_state * state)
 {
+  if (opts->audio_in_fd == -1)
+    {
+      if (pthread_mutex_lock(&state->input_mutex))
+        {
+          printf("liveScanner -> Unable to lock mutex\n");
+        }
+      printf("liveScanner -> Locked input mutex\n");
+    }
   while (1)
     {
       noCarrier (opts, state);
