@@ -192,11 +192,10 @@ playSynthesizedVoice (dsd_opts * opts, dsd_state * state)
       // output synthesized speech to sound card
       if (opts->audio_out_fd == -1)
         {
-          printf("playSynthesizedVoice -> Output %d samples\n", state->audio_out_idx);
-
           memcpy(state->output_buffer + state->output_offset, (state->audio_out_buf_p - state->audio_out_idx), (state->audio_out_idx * 2));
           state->output_offset += state->audio_out_idx;
-          printf("output_offset %d\n", state->output_offset);
+//          printf(">output_offset %d\n", state->output_offset);
+//          fflush(stdout);
         }
       else
         {

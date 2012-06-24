@@ -71,6 +71,8 @@ howto_square_ff::howto_square_ff ()
 	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (short)),
 	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (short)))
 {
+  excess_samples = 0;
+
   initOpts (&params.opts);
   initState (&params.state);
 
@@ -171,7 +173,7 @@ howto_square_ff::forecast (int noutput_items,
                            gr_vector_int &ninput_items_required)
 {
   // Input rate is 48000, output rate is 8000.
-  ninput_items_required[0] = noutput_items * 6;
+  ninput_items_required[0] = noutput_items * 6 - excess_samples;
 }
 
 int
@@ -185,16 +187,24 @@ howto_square_ff::general_work (int noutput_items,
     consume (0, 0);
     return 0;
   }
+  
+  excess_samples += ninput_items[0] - (noutput_items * 6);
+//  printf("%d %d %d samples requested\n", noutput_items, ninput_items[0], excess_samples);
+//  fflush(stdout);
 
   params.state.output_samples = (short *) output_items[0];
   params.state.output_num_samples = 0;
   params.state.output_length = noutput_items;
   params.state.output_finished = 0;
 
+  printf("locking input mutex\n");
+  fflush(stdout);
   if (pthread_mutex_lock(&params.state.input_mutex))
     {
       printf("Unable to lock mutex\n");
     }
+  printf("locked input mutex\n");
+  fflush(stdout);
 
   params.state.input_samples = (const short *) input_items[0];
   params.state.input_length = ninput_items[0];
@@ -224,5 +234,7 @@ howto_square_ff::general_work (int noutput_items,
   consume (0, ninput_items[0]);
 
   // Tell runtime system how many output items we produced.
-  return params.state.output_num_samples;
+//  printf("%d samples returned\n", params.state.output_num_samples);
+//  fflush(stdout);
+  return noutput_items;
 }

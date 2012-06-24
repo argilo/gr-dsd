@@ -75,6 +75,7 @@ private:
   friend HOWTO_API howto_square_ff_sptr howto_make_square_ff ();
 
   dsd_params params;
+  int excess_samples;
 
   /*!
    * \brief square a stream of floats.

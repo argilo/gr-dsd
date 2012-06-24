@@ -100,18 +100,25 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
               // We've reached the end of the buffer.  Wait for more next time.
               state->input_length = 0;
 
+              printf("locking output mutex\n");
+              fflush(stdout);
               if (pthread_mutex_lock(&state->output_mutex))
                 {
                   printf("Unable to lock mutex\n");
                 }
+              printf("locked output mutex\n");
+              fflush(stdout);
 
               state->output_finished = 1;
               state->output_num_samples = state->output_offset;
               if (state->output_num_samples > state->output_length) {
                 state->output_num_samples = state->output_length;
               }
-              memcpy(state->output_samples, state->output_buffer, 2 * state->output_num_samples);
+              memset(state->output_samples, 0, 2 * (state->output_length - state->output_num_samples));
+              memcpy(state->output_samples + (state->output_length - state->output_num_samples), state->output_buffer, 2 * state->output_num_samples);
               state->output_offset -= state->output_num_samples;
+//              printf("<output_offset %d\n", state->output_offset);
+//              fflush(stdout);
               for (i = 0; i < state->output_offset; i++)
                 {
                   state->output_buffer[i] = state->output_buffer[i + state->output_num_samples];
