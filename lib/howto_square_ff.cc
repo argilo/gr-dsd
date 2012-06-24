@@ -183,31 +183,26 @@ howto_square_ff::general_work (int noutput_items,
 			       gr_vector_void_star &output_items)
 {
   // We need at least 160 samples of output to work correctly.
-  if (noutput_items <= 160) {
+  if (noutput_items <= 160 || ninput_items[0] <= 0) {
     consume (0, 0);
     return 0;
   }
   
   excess_samples += ninput_items[0] - (noutput_items * 6);
-//  printf("%d %d %d samples requested\n", noutput_items, ninput_items[0], excess_samples);
-//  fflush(stdout);
 
   params.state.output_samples = (short *) output_items[0];
   params.state.output_num_samples = 0;
   params.state.output_length = noutput_items;
   params.state.output_finished = 0;
 
-  printf("locking input mutex\n");
-  fflush(stdout);
   if (pthread_mutex_lock(&params.state.input_mutex))
     {
       printf("Unable to lock mutex\n");
     }
-  printf("locked input mutex\n");
-  fflush(stdout);
 
   params.state.input_samples = (const short *) input_items[0];
   params.state.input_length = ninput_items[0];
+  params.state.input_offset = 0;
 
   if (pthread_cond_signal(&params.state.input_ready))
     {
@@ -225,7 +220,6 @@ howto_square_ff::general_work (int noutput_items,
         {
           printf("general_work -> Error waiting for condition\n");
         }
-      params.state.input_offset = 0;
     }
 
   // Tell runtime system how many input items we consumed on
@@ -234,7 +228,5 @@ howto_square_ff::general_work (int noutput_items,
   consume (0, ninput_items[0]);
 
   // Tell runtime system how many output items we produced.
-//  printf("%d samples returned\n", params.state.output_num_samples);
-//  fflush(stdout);
   return noutput_items;
 }

@@ -88,11 +88,9 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
                 {
                   printf("getSymbol -> Error waiting for condition\n");
                 }
-              state->input_offset = 0;
             }
           // Get the next sample from the buffer.
           sample = state->input_samples[state->input_offset++];
-          //printf("getSymbol --> sample=%d\n", sample);
           if (state->input_offset == state->input_length)
             {
               int i;
@@ -100,16 +98,11 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
               // We've reached the end of the buffer.  Wait for more next time.
               state->input_length = 0;
 
-              printf("locking output mutex\n");
-              fflush(stdout);
               if (pthread_mutex_lock(&state->output_mutex))
                 {
                   printf("Unable to lock mutex\n");
                 }
-              printf("locked output mutex\n");
-              fflush(stdout);
 
-              state->output_finished = 1;
               state->output_num_samples = state->output_offset;
               if (state->output_num_samples > state->output_length) {
                 state->output_num_samples = state->output_length;
@@ -117,12 +110,11 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
               memset(state->output_samples, 0, 2 * (state->output_length - state->output_num_samples));
               memcpy(state->output_samples + (state->output_length - state->output_num_samples), state->output_buffer, 2 * state->output_num_samples);
               state->output_offset -= state->output_num_samples;
-//              printf("<output_offset %d\n", state->output_offset);
-//              fflush(stdout);
               for (i = 0; i < state->output_offset; i++)
                 {
                   state->output_buffer[i] = state->output_buffer[i + state->output_num_samples];
                 }
+              state->output_finished = 1;
 
               // Wake up general_work
               if (pthread_cond_signal(&state->output_ready))
