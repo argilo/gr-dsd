@@ -131,10 +131,18 @@ howto_square_ff::howto_square_ff ()
 
   // Lock output mutex
   if (pthread_mutex_lock(&params.state.output_mutex))
-    {
-      printf("Unable to lock mutex\n");
-    }
+  {
+    printf("Unable to lock mutex\n");
+  }
   printf("Locked output mutex\n");
+
+  params.state.input_length = 0;
+  params.state.output_buffer = (short *) malloc(sizeof(short) * 8000);
+  params.state.output_offset = 0;
+  if (params.state.output_buffer == NULL)
+  {
+    printf("Unable to allocate output buffer.\n");
+  }
 
   // Spawn DSD in its own thread
   pthread_t dsd_thread;
@@ -142,8 +150,6 @@ howto_square_ff::howto_square_ff ()
   {
     printf("Unable to spawn thread\n");
   }
-
-  params.state.input_length = 0;
 }
 
 /*
@@ -157,6 +163,7 @@ howto_square_ff::~howto_square_ff ()
       printf("Unable to unlock mutex\n");
     }
   printf("Unlocked output mutex\n");
+  free(params.state.output_buffer);
 }
 
 void
@@ -173,8 +180,14 @@ howto_square_ff::general_work (int noutput_items,
 			       gr_vector_const_void_star &input_items,
 			       gr_vector_void_star &output_items)
 {
+  // We need at least 160 samples of output to work correctly.
+  if (noutput_items <= 160) {
+    consume (0, 0);
+    return 0;
+  }
+
   params.state.output_samples = (short *) output_items[0];
-  params.state.output_offset = 0;
+  params.state.output_num_samples = 0;
   params.state.output_length = noutput_items;
   params.state.output_finished = 0;
 
@@ -220,5 +233,5 @@ howto_square_ff::general_work (int noutput_items,
   consume (0, ninput_items[0]);
 
   // Tell runtime system how many output items we produced.
-  return params.state.output_offset;
+  return params.state.output_num_samples;
 }

@@ -97,6 +97,8 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
           //printf("getSymbol --> sample=%d\n", sample);
           if (state->input_offset == state->input_length)
             {
+              int i;
+
               // We've reached the end of the buffer.  Wait for more next time.
               printf("getSymbol -> End of buffer.\n");
               state->input_length = 0;
@@ -109,6 +111,16 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
               printf("getSymbol -> mutex locked\n");
 
               state->output_finished = 1;
+              state->output_num_samples = state->output_offset;
+              if (state->output_num_samples > state->output_length) {
+                state->output_num_samples = state->output_length;
+              }
+              memcpy(state->output_samples, state->output_buffer, sizeof(short) * state->output_num_samples);
+              state->output_offset -= state->output_num_samples;
+              for (i = 0; i < state->output_offset; i++)
+                {
+                  state->output_buffer[i] = state->output_buffer[i + state->output_num_samples];
+                }
 
               // Wake up general_work
               printf("getSymbol -> signaling\n");

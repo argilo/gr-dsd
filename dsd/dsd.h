@@ -168,9 +168,11 @@ typedef struct
 
   pthread_mutex_t output_mutex;
   pthread_cond_t output_ready;
-  short *output_samples;
-  int output_length;
+  short *output_buffer;
   int output_offset;
+  short *output_samples;
+  int output_num_samples;
+  int output_length;
   int output_finished;
 } dsd_state;
 

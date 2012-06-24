@@ -194,29 +194,8 @@ playSynthesizedVoice (dsd_opts * opts, dsd_state * state)
         {
           printf("playSynthesizedVoice -> Output %d samples\n", state->audio_out_idx);
 
-          printf("playSynthesizedVoice -> locking mutex\n");
-          if (pthread_mutex_lock(&state->output_mutex))
-            {
-              printf("Unable to lock mutex\n");
-            }
-          printf("playSynthesizedVoice -> mutex locked\n");
-
-          if (state->output_offset + state->audio_out_idx > state->output_length)
-            {
-              printf("OVERFLOW!!!\n");
-            }
-          else
-            {
-              memcpy(state->output_samples, (state->audio_out_buf_p - state->audio_out_idx), (state->audio_out_idx * 2));
-              state->output_offset += state->audio_out_idx;
-            }
-
-          printf("playSynthesizedVoice -> unlocking mutex\n");
-          if (pthread_mutex_unlock(&state->output_mutex))
-            {
-              printf("Unable to unlock mutex\n");
-            }
-          printf("playSynthesizedVoice -> mutex unlocked\n");
+          memcpy(state->output_buffer, (state->audio_out_buf_p - state->audio_out_idx), (state->audio_out_idx * 2));
+          state->output_offset += state->audio_out_idx;
         }
       else
         {
