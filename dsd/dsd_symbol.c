@@ -89,8 +89,8 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
                   printf("getSymbol -> Error waiting for condition\n");
                 }
             }
-          // Get the next sample from the buffer.
-          sample = state->input_samples[state->input_offset++];
+          // Get the next sample from the buffer, converting from float to short.
+          sample = (short) (state->input_samples[state->input_offset++] * 32768);
           if (state->input_offset == state->input_length)
             {
               int i;
@@ -107,8 +107,14 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
               if (state->output_num_samples > state->output_length) {
                 state->output_num_samples = state->output_length;
               }
-              memset(state->output_samples, 0, 2 * (state->output_length - state->output_num_samples));
-              memcpy(state->output_samples + (state->output_length - state->output_num_samples), state->output_buffer, 2 * state->output_num_samples);
+              for (i = 0; i < state->output_length - state->output_num_samples; i++)
+                {
+                  state->output_samples[i] = 0;
+                }
+              for (; i < state->output_length; i++)
+                {
+                  state->output_samples[i] = state->output_buffer[i - (state->output_length - state->output_num_samples)] / 32768.0;
+                }
               state->output_offset -= state->output_num_samples;
               for (i = 0; i < state->output_offset; i++)
                 {

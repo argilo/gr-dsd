@@ -68,8 +68,8 @@ void* run_dsd (void *arg)
  */
 howto_square_ff::howto_square_ff ()
   : gr_block ("square_ff",
-	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (short)),
-	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (short)))
+	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (float)),
+	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (float)))
 {
   excess_samples = 0;
 
@@ -139,7 +139,8 @@ howto_square_ff::howto_square_ff ()
   printf("Locked output mutex\n");
 
   params.state.input_length = 0;
-  params.state.output_buffer = (short *) malloc(sizeof(short) * 80000);
+
+  params.state.output_buffer = (short *) malloc(2 * 80000); // TODO: Make this variable size.
   params.state.output_offset = 0;
   if (params.state.output_buffer == NULL)
   {
@@ -161,9 +162,9 @@ howto_square_ff::~howto_square_ff ()
 {
   // Unlock output mutex
   if (pthread_mutex_unlock(&params.state.output_mutex))
-    {
-      printf("Unable to unlock mutex\n");
-    }
+  {
+    printf("Unable to unlock mutex\n");
+  }
   printf("Unlocked output mutex\n");
   free(params.state.output_buffer);
 }
@@ -183,44 +184,45 @@ howto_square_ff::general_work (int noutput_items,
 			       gr_vector_void_star &output_items)
 {
   // We need at least 160 samples of output to work correctly.
-  if (noutput_items <= 160 || ninput_items[0] <= 0) {
+  if (noutput_items <= 160 || ninput_items[0] <= 0)
+  {
     consume (0, 0);
     return 0;
   }
   
   excess_samples += ninput_items[0] - (noutput_items * 6);
 
-  params.state.output_samples = (short *) output_items[0];
+  params.state.output_samples = (float *) output_items[0];
   params.state.output_num_samples = 0;
   params.state.output_length = noutput_items;
   params.state.output_finished = 0;
 
   if (pthread_mutex_lock(&params.state.input_mutex))
-    {
-      printf("Unable to lock mutex\n");
-    }
+  {
+    printf("Unable to lock mutex\n");
+  }
 
-  params.state.input_samples = (const short *) input_items[0];
+  params.state.input_samples = (const float *) input_items[0];
   params.state.input_length = ninput_items[0];
   params.state.input_offset = 0;
 
   if (pthread_cond_signal(&params.state.input_ready))
-    {
-      printf("Unable to signal\n");
-    }
+  {
+    printf("Unable to signal\n");
+  }
 
   if (pthread_mutex_unlock(&params.state.input_mutex))
-    {
-      printf("Unable to unlock mutex\n");
-    }
+  {
+    printf("Unable to unlock mutex\n");
+  }
 
   while (params.state.output_finished == 0)
+  {
+    if (pthread_cond_wait(&params.state.output_ready, &params.state.output_mutex))
     {
-      if (pthread_cond_wait(&params.state.output_ready, &params.state.output_mutex))
-        {
-          printf("general_work -> Error waiting for condition\n");
-        }
+      printf("general_work -> Error waiting for condition\n");
     }
+  }
 
   // Tell runtime system how many input items we consumed on
   // each input stream.

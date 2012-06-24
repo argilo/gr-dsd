@@ -162,7 +162,7 @@ typedef struct
 
   pthread_mutex_t input_mutex;
   pthread_cond_t input_ready;
-  const short *input_samples;
+  const float *input_samples;
   int input_length;
   int input_offset;
 
@@ -170,7 +170,7 @@ typedef struct
   pthread_cond_t output_ready;
   short *output_buffer;
   int output_offset;
-  short *output_samples;
+  float *output_samples;
   int output_num_samples;
   int output_length;
   int output_finished;

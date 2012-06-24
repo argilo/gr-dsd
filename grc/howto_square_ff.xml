@@ -8,11 +8,11 @@
 
   <sink>
     <name>in</name>
-    <type>short</type>
+    <type>float</type>
   </sink>
 
   <source>
     <name>out</name>
-    <type>short</type>
+    <type>float</type>
   </source>
 </block>
