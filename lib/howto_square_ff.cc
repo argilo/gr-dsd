@@ -109,12 +109,34 @@ howto_square_ff::howto_square_ff ()
   params.state.rf_mod = 2;
   printf ("Enabling only GFSK modulation optimizations.\n");
 
-  // Initialize the mutex
+  // Initialize the mutexes
   if(pthread_mutex_init(&params.state.input_mutex, NULL))
   {
-    printf("Unable to initialize a mutex\n");
+    printf("Unable to initialize input mutex\n");
+  }
+  if(pthread_mutex_init(&params.state.output_mutex, NULL))
+  {
+    printf("Unable to initialize output mutex\n");
   }
 
+  // Initialize the conditions
+  if(pthread_cond_init(&params.state.input_ready, NULL))
+  {
+    printf("Unable to initialize input condition\n");
+  }
+  if(pthread_cond_init(&params.state.output_ready, NULL))
+  {
+    printf("Unable to initialize output condition\n");
+  }
+
+  // Lock output mutex
+  if (pthread_mutex_lock(&params.state.output_mutex))
+    {
+      printf("Unable to lock mutex\n");
+    }
+  printf("Locked output mutex\n");
+
+  // Spawn DSD in its own thread
   pthread_t dsd_thread;
   if(pthread_create(&dsd_thread, NULL, &run_dsd, &params))
   {
@@ -127,7 +149,12 @@ howto_square_ff::howto_square_ff ()
  */
 howto_square_ff::~howto_square_ff ()
 {
-  // nothing else required in this example
+  // Unlock output mutex
+  if (pthread_mutex_unlock(&params.state.output_mutex))
+    {
+      printf("Unable to unlock mutex\n");
+    }
+  printf("Unlocked output mutex\n");
 }
 
 void
@@ -144,7 +171,10 @@ howto_square_ff::general_work (int noutput_items,
 			       gr_vector_const_void_star &input_items,
 			       gr_vector_void_star &output_items)
 {
-  short *out = (short *) output_items[0];
+  params.state.output_samples = (short *) output_items[0];
+  params.state.output_offset = 0;
+  params.state.output_length = noutput_items;
+  params.state.output_finished = 0;
 
   printf("general_work -> locking mutex\n");
   if (pthread_mutex_lock(&params.state.input_mutex))
@@ -170,9 +200,16 @@ howto_square_ff::general_work (int noutput_items,
     }
   printf("general_work -> mutex unlocked\n");
 
-  for (int i = 0; i < noutput_items; i++){
-    out[i] = 0;
-  }
+  while (params.state.output_finished == 0)
+    {
+      printf("general_work -> Waiting for condition.\n");
+      if (pthread_cond_wait(&params.state.output_ready, &params.state.output_mutex))
+        {
+          printf("general_work -> Error waiting for condition\n");
+        }
+      printf("general_work -> Notified.\n");
+      params.state.input_offset = 0;
+    }
 
   // Tell runtime system how many input items we consumed on
   // each input stream.
@@ -180,5 +217,5 @@ howto_square_ff::general_work (int noutput_items,
   consume (0, ninput_items[0]);
 
   // Tell runtime system how many output items we produced.
-  return noutput_items;
+  return params.state.output_offset;
 }

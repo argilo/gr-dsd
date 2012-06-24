@@ -165,6 +165,13 @@ typedef struct
   const short *input_samples;
   int input_length;
   int input_offset;
+
+  pthread_mutex_t output_mutex;
+  pthread_cond_t output_ready;
+  short *output_samples;
+  int output_length;
+  int output_offset;
+  int output_finished;
 } dsd_state;
 
 /*
