@@ -84,12 +84,10 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
           while (state->input_length == 0)
             {
               // If the buffer is empty, wait for more samples to arrive.
-              printf("getSymbol -> Waiting for condition.\n");
               if (pthread_cond_wait(&state->input_ready, &state->input_mutex))
                 {
                   printf("getSymbol -> Error waiting for condition\n");
                 }
-              printf("getSymbol -> Notified.\n");
               state->input_offset = 0;
             }
           // Get the next sample from the buffer.
@@ -100,15 +98,12 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
               int i;
 
               // We've reached the end of the buffer.  Wait for more next time.
-              printf("getSymbol -> End of buffer.\n");
               state->input_length = 0;
 
-              printf("getSymbol -> locking mutex\n");
               if (pthread_mutex_lock(&state->output_mutex))
                 {
                   printf("Unable to lock mutex\n");
                 }
-              printf("getSymbol -> mutex locked\n");
 
               state->output_finished = 1;
               state->output_num_samples = state->output_offset;
@@ -123,19 +118,15 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
                 }
 
               // Wake up general_work
-              printf("getSymbol -> signaling\n");
               if (pthread_cond_signal(&state->output_ready))
                 {
                   printf("Unable to signal\n");
               }
-              printf("getSymbol -> signaled\n");
 
-              printf("getSymbol -> unlocking mutex\n");
               if (pthread_mutex_unlock(&state->output_mutex))
                 {
                   printf("Unable to unlock mutex\n");
                 }
-              printf("getSymbol -> mutex unlocked\n");
             }
         }
       else

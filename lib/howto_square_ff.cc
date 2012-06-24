@@ -191,39 +191,30 @@ howto_square_ff::general_work (int noutput_items,
   params.state.output_length = noutput_items;
   params.state.output_finished = 0;
 
-  printf("general_work -> locking mutex\n");
   if (pthread_mutex_lock(&params.state.input_mutex))
     {
       printf("Unable to lock mutex\n");
     }
-  printf("general_work -> mutex locked\n");
 
   params.state.input_samples = (const short *) input_items[0];
   params.state.input_length = ninput_items[0];
-  printf("general_work -> input samples: %d\n", params.state.input_length);
 
-  printf("general_work -> signaling\n");
   if (pthread_cond_signal(&params.state.input_ready))
     {
       printf("Unable to signal\n");
     }
-  printf("general_work -> signaled\n");
 
-  printf("general_work -> unlocking mutex\n");
   if (pthread_mutex_unlock(&params.state.input_mutex))
     {
       printf("Unable to unlock mutex\n");
     }
-  printf("general_work -> mutex unlocked\n");
 
   while (params.state.output_finished == 0)
     {
-      printf("general_work -> Waiting for condition.\n");
       if (pthread_cond_wait(&params.state.output_ready, &params.state.output_mutex))
         {
           printf("general_work -> Error waiting for condition\n");
         }
-      printf("general_work -> Notified.\n");
       params.state.input_offset = 0;
     }
 
