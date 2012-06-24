@@ -137,7 +137,7 @@ howto_square_ff::howto_square_ff ()
   printf("Locked output mutex\n");
 
   params.state.input_length = 0;
-  params.state.output_buffer = (short *) malloc(sizeof(short) * 8000);
+  params.state.output_buffer = (short *) malloc(sizeof(short) * 80000);
   params.state.output_offset = 0;
   if (params.state.output_buffer == NULL)
   {

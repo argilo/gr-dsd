@@ -115,7 +115,7 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
               if (state->output_num_samples > state->output_length) {
                 state->output_num_samples = state->output_length;
               }
-              memcpy(state->output_samples, state->output_buffer, sizeof(short) * state->output_num_samples);
+              memcpy(state->output_samples, state->output_buffer, 2 * state->output_num_samples);
               state->output_offset -= state->output_num_samples;
               for (i = 0; i < state->output_offset; i++)
                 {

@@ -194,8 +194,9 @@ playSynthesizedVoice (dsd_opts * opts, dsd_state * state)
         {
           printf("playSynthesizedVoice -> Output %d samples\n", state->audio_out_idx);
 
-          memcpy(state->output_buffer, (state->audio_out_buf_p - state->audio_out_idx), (state->audio_out_idx * 2));
+          memcpy(state->output_buffer + state->output_offset, (state->audio_out_buf_p - state->audio_out_idx), (state->audio_out_idx * 2));
           state->output_offset += state->audio_out_idx;
+          printf("output_offset %d\n", state->output_offset);
         }
       else
         {
