@@ -67,12 +67,10 @@ void* run_dsd (void *arg)
  * The private constructor
  */
 howto_square_ff::howto_square_ff ()
-  : gr_block ("square_ff",
+  : gr_sync_decimator ("square_ff",
 	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (float)),
-	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (float)))
+	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (float)), 6)
 {
-  excess_samples = 0;
-
   initOpts (&params.opts);
   initState (&params.state);
 
@@ -169,30 +167,31 @@ howto_square_ff::~howto_square_ff ()
   free(params.state.output_buffer);
 }
 
-void
-howto_square_ff::forecast (int noutput_items,
-                           gr_vector_int &ninput_items_required)
-{
-  // Input rate is 48000, output rate is 8000.
-  ninput_items_required[0] = noutput_items * 6 - excess_samples;
-}
-
 int
-howto_square_ff::general_work (int noutput_items,
-			       gr_vector_int &ninput_items,
-			       gr_vector_const_void_star &input_items,
-			       gr_vector_void_star &output_items)
+howto_square_ff::work (int noutput_items,
+			gr_vector_const_void_star &input_items,
+			gr_vector_void_star &output_items)
 {
-  // We need at least 160 samples of output to work correctly.
-  if (noutput_items <= 160 || ninput_items[0] <= 0)
-  {
-    consume (0, 0);
-    return 0;
-  }
-  
-  excess_samples += ninput_items[0] - (noutput_items * 6);
+  int i;
+  int send_to_dsd = 0;
+  const float *in = (const float *) input_items[0];
+  float *out = (float *) output_items[0];
 
-  params.state.output_samples = (float *) output_items[0];
+  for (i = 0; i < noutput_items * 6; i++) {
+    if (in[i] != 0) {
+      send_to_dsd = 1;
+      break;
+    }
+  }
+  if (!send_to_dsd) {
+    // All samples are zero, so skip DSD processing.
+    for (i = 0; i < noutput_items; i++) {
+      out[i] = 0;
+    }
+    return noutput_items;
+  }
+
+  params.state.output_samples = out;
   params.state.output_num_samples = 0;
   params.state.output_length = noutput_items;
   params.state.output_finished = 0;
@@ -202,8 +201,8 @@ howto_square_ff::general_work (int noutput_items,
     printf("Unable to lock mutex\n");
   }
 
-  params.state.input_samples = (const float *) input_items[0];
-  params.state.input_length = ninput_items[0];
+  params.state.input_samples = in;
+  params.state.input_length = noutput_items * 6;
   params.state.input_offset = 0;
 
   if (pthread_cond_signal(&params.state.input_ready))
@@ -223,11 +222,6 @@ howto_square_ff::general_work (int noutput_items,
       printf("general_work -> Error waiting for condition\n");
     }
   }
-
-  // Tell runtime system how many input items we consumed on
-  // each input stream.
-
-  consume (0, ninput_items[0]);
 
   // Tell runtime system how many output items we produced.
   return noutput_items;

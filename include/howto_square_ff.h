@@ -23,7 +23,7 @@
 #define INCLUDED_HOWTO_SQUARE_FF_H
 
 #include <howto_api.h>
-#include <gr_block.h>
+#include <gr_sync_decimator.h>
 
 extern "C"
 {
@@ -66,7 +66,7 @@ HOWTO_API howto_square_ff_sptr howto_make_square_ff ();
  *
  * \sa howto_square2_ff for a version that subclasses gr_sync_block.
  */
-class HOWTO_API howto_square_ff : public gr_block
+class HOWTO_API howto_square_ff : public gr_sync_decimator
 {
 private:
   // The friend declaration allows howto_make_square_ff to
@@ -75,7 +75,6 @@ private:
   friend HOWTO_API howto_square_ff_sptr howto_make_square_ff ();
 
   dsd_params params;
-  int excess_samples;
 
   /*!
    * \brief square a stream of floats.
@@ -85,15 +84,11 @@ private:
  public:
   ~howto_square_ff ();	// public destructor
 
-  void forecast (int noutput_items,
-                 gr_vector_int &ninput_items_required);
-
   // Where all the action really happens
 
-  int general_work (int noutput_items,
-		    gr_vector_int &ninput_items,
-		    gr_vector_const_void_star &input_items,
-		    gr_vector_void_star &output_items);
+  int work (int noutput_items,
+	    gr_vector_const_void_star &input_items,
+	    gr_vector_void_star &output_items);
 };
 
 #endif /* INCLUDED_HOWTO_SQUARE_FF_H */
