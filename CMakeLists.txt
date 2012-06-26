@@ -100,6 +100,7 @@ endif()
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/dsd
+    ${CMAKE_SOURCE_DIR}/mbelib
     ${Boost_INCLUDE_DIRS}
     ${GRUEL_INCLUDE_DIRS}
     ${GNURADIO_CORE_INCLUDE_DIRS}
@@ -138,3 +139,4 @@ add_subdirectory(grc)
 add_subdirectory(apps)
 add_subdirectory(docs)
 add_subdirectory(dsd)
+add_subdirectory(mbelib)
