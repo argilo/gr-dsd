@@ -29,17 +29,17 @@
 #include "config.h"
 #endif
 
-#include <howto_square_ff.h>
+#include <dsd_block_ff.h>
 #include <gr_io_signature.h>
 
 /*
- * Create a new instance of howto_square_ff and return
+ * Create a new instance of dsd_block_ff and return
  * a boost shared_ptr.  This is effectively the public constructor.
  */
-howto_square_ff_sptr
-howto_make_square_ff ()
+dsd_block_ff_sptr
+dsd_make_block_ff ()
 {
-  return gnuradio::get_initial_sptr(new howto_square_ff ());
+  return gnuradio::get_initial_sptr(new dsd_block_ff ());
 }
 
 /*
@@ -66,8 +66,8 @@ void* run_dsd (void *arg)
 /*
  * The private constructor
  */
-howto_square_ff::howto_square_ff ()
-  : gr_sync_decimator ("square_ff",
+dsd_block_ff::dsd_block_ff ()
+  : gr_sync_decimator ("block_ff",
 	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (float)),
 	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (float)), 6)
 {
@@ -156,7 +156,7 @@ howto_square_ff::howto_square_ff ()
 /*
  * Our virtual destructor.
  */
-howto_square_ff::~howto_square_ff ()
+dsd_block_ff::~dsd_block_ff ()
 {
   // Unlock output mutex
   if (pthread_mutex_unlock(&params.state.output_mutex))
@@ -168,7 +168,7 @@ howto_square_ff::~howto_square_ff ()
 }
 
 int
-howto_square_ff::work (int noutput_items,
+dsd_block_ff::work (int noutput_items,
 			gr_vector_const_void_star &input_items,
 			gr_vector_void_star &output_items)
 {

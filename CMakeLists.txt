@@ -22,7 +22,7 @@
 # Project setup
 ########################################################################
 cmake_minimum_required(VERSION 2.6)
-project(gr-howto-write-a-block CXX C)
+project(gr-dsd-block CXX C)
 enable_testing()
 
 #select the release build type by default to get optimization flags
@@ -60,7 +60,7 @@ set(Boost_ADDITIONAL_VERSIONS
 find_package(Boost "1.35")
 
 if(NOT Boost_FOUND)
-    message(FATAL_ERROR "Boost required to compile howto")
+    message(FATAL_ERROR "Boost required to compile gr-dsd")
 endif()
 
 ########################################################################
@@ -87,11 +87,11 @@ find_package(Gruel)
 find_package(GnuradioCore)
 
 if(NOT GRUEL_FOUND)
-    message(FATAL_ERROR "Gruel required to compile howto")
+    message(FATAL_ERROR "Gruel required to compile gr-dsd")
 endif()
 
 if(NOT GNURADIO_CORE_FOUND)
-    message(FATAL_ERROR "GnuRadio Core required to compile howto")
+    message(FATAL_ERROR "GnuRadio Core required to compile gr-dsd")
 endif()
 
 ########################################################################
@@ -113,8 +113,8 @@ link_directories(
 )
 
 # Set component parameters
-set(GR_HOWTO_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE INTERNAL "" FORCE)
-set(GR_HOWTO_SWIG_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/swig CACHE INTERNAL "" FORCE)
+set(GR_DSD_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE INTERNAL "" FORCE)
+set(GR_DSD_SWIG_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/swig CACHE INTERNAL "" FORCE)
 
 ########################################################################
 # Create uninstall target

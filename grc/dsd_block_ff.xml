@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <block>
-  <name>Square</name>
-  <key>howto_square_ff</key>
-  <category>HOWTO</category>
-  <import>import howto</import>
-  <make>howto.square_ff()</make>
+  <name>DSD Block</name>
+  <key>dsd_block_ff</key>
+  <category>DSD</category>
+  <import>import dsd</import>
+  <make>dsd.block_ff()</make>
 
   <sink>
     <name>in</name>

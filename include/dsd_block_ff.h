@@ -19,10 +19,10 @@
  * the Free Software Foundation, Inc., 51 Franklin Street,
  * Boston, MA 02110-1301, USA.
  */
-#ifndef INCLUDED_HOWTO_SQUARE_FF_H
-#define INCLUDED_HOWTO_SQUARE_FF_H
+#ifndef INCLUDED_DSD_BLOCK_FF_H
+#define INCLUDED_DSD_BLOCK_FF_H
 
-#include <howto_api.h>
+#include <dsd_api.h>
 #include <gr_sync_decimator.h>
 
 extern "C"
@@ -36,7 +36,7 @@ typedef struct
   dsd_state state;
 } dsd_params;
 
-class howto_square_ff;
+class dsd_block_ff;
 
 /*
  * We use boost::shared_ptr's instead of raw pointers for all access
@@ -49,38 +49,38 @@ class howto_square_ff;
  *
  * As a convention, the _sptr suffix indicates a boost::shared_ptr
  */
-typedef boost::shared_ptr<howto_square_ff> howto_square_ff_sptr;
+typedef boost::shared_ptr<dsd_block_ff> dsd_block_ff_sptr;
 
 /*!
- * \brief Return a shared_ptr to a new instance of howto_square_ff.
+ * \brief Return a shared_ptr to a new instance of dsd_block_ff.
  *
- * To avoid accidental use of raw pointers, howto_square_ff's
- * constructor is private.  howto_make_square_ff is the public
+ * To avoid accidental use of raw pointers, dsd_block_ff's
+ * constructor is private.  dsd_make_block_ff is the public
  * interface for creating new instances.
  */
-HOWTO_API howto_square_ff_sptr howto_make_square_ff ();
+DSD_API dsd_block_ff_sptr dsd_make_block_ff ();
 
 /*!
- * \brief square a stream of floats.
+ * \brief pass discriminator output through Digital Speech Decoder
  * \ingroup block
  */
-class HOWTO_API howto_square_ff : public gr_sync_decimator
+class DSD_API dsd_block_ff : public gr_sync_decimator
 {
 private:
-  // The friend declaration allows howto_make_square_ff to
+  // The friend declaration allows dsd_make_block_ff to
   // access the private constructor.
 
-  friend HOWTO_API howto_square_ff_sptr howto_make_square_ff ();
+  friend DSD_API dsd_block_ff_sptr dsd_make_block_ff ();
 
   dsd_params params;
 
   /*!
-   * \brief square a stream of floats.
+   * \brief pass discriminator output thread Digital Speech Decoder
    */
-  howto_square_ff ();  	// private constructor
+  dsd_block_ff ();  	// private constructor
 
  public:
-  ~howto_square_ff ();	// public destructor
+  ~dsd_block_ff ();	// public destructor
 
   // Where all the action really happens
 
@@ -89,4 +89,4 @@ private:
 	    gr_vector_void_star &output_items);
 };
 
-#endif /* INCLUDED_HOWTO_SQUARE_FF_H */
+#endif /* INCLUDED_DSD_BLOCK_FF_H */

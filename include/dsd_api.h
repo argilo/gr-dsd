@@ -19,15 +19,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef INCLUDED_HOWTO_API_H
-#define INCLUDED_HOWTO_API_H
+#ifndef INCLUDED_DSD_API_H
+#define INCLUDED_DSD_API_H
 
 #include <gruel/attributes.h>
 
-#ifdef gnuradio_howto_EXPORTS
-#  define HOWTO_API __GR_ATTR_EXPORT
+#ifdef gnuradio_dsd_EXPORTS
+#  define DSD_API __GR_ATTR_EXPORT
 #else
-#  define HOWTO_API __GR_ATTR_IMPORT
+#  define DSD_API __GR_ATTR_IMPORT
 #endif
 
-#endif /* INCLUDED_HOWTO_API_H */
+#endif /* INCLUDED_DSD_API_H */

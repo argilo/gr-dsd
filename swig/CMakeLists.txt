@@ -39,23 +39,23 @@ foreach(incdir ${GRUEL_INCLUDE_DIRS})
     list(APPEND GR_SWIG_INCLUDE_DIRS ${incdir}/gruel/swig)
 endforeach(incdir)
 
-set(GR_SWIG_LIBRARIES gnuradio-howto)
-set(GR_SWIG_DOC_FILE ${CMAKE_CURRENT_BINARY_DIR}/howto_swig_doc.i)
+set(GR_SWIG_LIBRARIES gr-dsd)
+set(GR_SWIG_DOC_FILE ${CMAKE_CURRENT_BINARY_DIR}/dsd_swig_doc.i)
 set(GR_SWIG_DOC_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
-GR_SWIG_MAKE(howto_swig howto_swig.i)
+GR_SWIG_MAKE(dsd_swig dsd_swig.i)
 
 ########################################################################
 # Install the build swig module
 ########################################################################
-GR_SWIG_INSTALL(TARGETS howto_swig DESTINATION ${GR_PYTHON_DIR}/howto)
+GR_SWIG_INSTALL(TARGETS dsd_swig DESTINATION ${GR_PYTHON_DIR}/dsd)
 
 ########################################################################
 # Install swig .i files for development
 ########################################################################
 install(
     FILES
-    howto_swig.i
-    ${CMAKE_CURRENT_BINARY_DIR}/howto_swig_doc.i
-    DESTINATION ${GR_INCLUDE_DIR}/howto/swig
+    dsd_swig.i
+    ${CMAKE_CURRENT_BINARY_DIR}/dsd_swig_doc.i
+    DESTINATION ${GR_INCLUDE_DIR}/dsd/swig
 )

@@ -21,7 +21,7 @@
 # Install public header files
 ########################################################################
 install(FILES
-    howto_api.h
-    howto_square_ff.h
-    DESTINATION include/howto
+    dsd_api.h
+    dsd_block_ff.h
+    DESTINATION include/dsd
 )
