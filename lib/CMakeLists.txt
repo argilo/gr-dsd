@@ -34,17 +34,3 @@ install(TARGETS gnuradio-howto
     ARCHIVE DESTINATION lib${LIB_SUFFIX} # .lib file
     RUNTIME DESTINATION bin              # .dll file
 )
-
-########################################################################
-# Build and register unit test
-########################################################################
-find_package(Boost COMPONENTS unit_test_framework)
-
-include(GrTest)
-set(GR_TEST_TARGET_DEPS gnuradio-howto)
-#turn each test cpp file into an executable with an int main() function
-add_definitions(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
-
-add_executable(qa_howto_square_ff qa_howto_square_ff.cc)
-target_link_libraries(qa_howto_square_ff gnuradio-howto ${Boost_LIBRARIES})
-GR_ADD_TEST(qa_howto_square_ff qa_howto_square_ff)
