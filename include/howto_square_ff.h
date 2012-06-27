@@ -63,8 +63,6 @@ HOWTO_API howto_square_ff_sptr howto_make_square_ff ();
 /*!
  * \brief square a stream of floats.
  * \ingroup block
- *
- * \sa howto_square2_ff for a version that subclasses gr_sync_block.
  */
 class HOWTO_API howto_square_ff : public gr_sync_decimator
 {

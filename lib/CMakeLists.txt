@@ -22,7 +22,7 @@
 ########################################################################
 include(GrPlatform) #define LIB_SUFFIX
 
-add_library(gnuradio-howto SHARED howto_square_ff.cc howto_square2_ff.cc)
+add_library(gnuradio-howto SHARED howto_square_ff.cc)
 target_link_libraries(gnuradio-howto dsd ${Boost_LIBRARIES} ${GRUEL_LIBRARIES} ${GNURADIO_CORE_LIBRARIES})
 set_target_properties(gnuradio-howto PROPERTIES DEFINE_SYMBOL "gnuradio_howto_EXPORTS")
 
@@ -48,7 +48,3 @@ add_definitions(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
 add_executable(qa_howto_square_ff qa_howto_square_ff.cc)
 target_link_libraries(qa_howto_square_ff gnuradio-howto ${Boost_LIBRARIES})
 GR_ADD_TEST(qa_howto_square_ff qa_howto_square_ff)
-
-add_executable(qa_howto_square2_ff qa_howto_square2_ff.cc)
-target_link_libraries(qa_howto_square2_ff gnuradio-howto ${Boost_LIBRARIES})
-GR_ADD_TEST(qa_howto_square2_ff qa_howto_square2_ff)
