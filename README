@@ -1,0 +1,69 @@
+# Copyright 2012 Clayton Smith
+#
+# This file is part of gr-dsd
+#
+# gr-dsd is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# gr-dsd is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with gr-dsd; see the file COPYING.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street,
+# Boston, MA 02110-1301, USA.
+
+gr-dsd
+======
+
+Author: Clayton Smith
+Email: <argilo@gmail.com>
+
+The goal of this project is to package Digital Speech Decoder (DSD) as
+a GNU Radio block, so that it can be easily used with software radio
+peripherals such as the Ettus Research USRP or RTL2832U-based USB TV
+tuners.
+
+Note that it is still in an early stage of development.  The DSD
+options are hard coded to "-fp -u 10 -v 1 -mg" for EDACS Provoice
+decoding, but they will soon be configurable.  I have only tested on
+Ubuntu 12.04 64-bit with GNU Radio 3.6.1, so please let me know if you
+have any trouble building and running it.
+
+Build instructions:
+
+    cmake .
+    make
+    sudo make install
+    sudo ldconfig
+
+After running the above commands, "DSD Block" should appear under the
+"DSD" category in GNU Radio Companion, and "block_ff" will be available
+in the "dsd" Python package.
+
+The block expects 48000 samples per second input, and outputs sound at
+8000 samples per second.  The input should be FM-demodulated (for
+example, with GNU Radio's Quadrature Demod block) and should be between
+-1 and 1 while receiving digital signals.  (A quadrature demod gain of
+1.6 works well for me for EDACS Provoice.)  The input signal should
+also be free of DC bias, so make sure you are tuned accurately, or
+filter out DC.
+
+To save CPU cycles, the block detects when the input is zero and avoids
+sending it through DSD.  Thus it helps to put a squelch block before
+gr-dsd, especially if you're using many copies of gr-dsd in parallel.
+
+The underlying DSD and mbelib were taken from:
+
+    https://github.com/szechyjs/dsd
+    https://github.com/szechyjs/mbelib
+
+No modifications to mbelib were required, but DSD has been modified to
+bypass the sound card.  The GNU Radio block itself was adapted from the
+gr-howto-write-a-block sample included with GNU Radio.
+
+Contributions are welcome!
