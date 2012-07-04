@@ -133,7 +133,6 @@ dsd_block_ff::dsd_block_ff (int verbosity)
   {
     printf("Unable to lock mutex\n");
   }
-  printf("Locked output mutex\n");
 
   params.state.input_length = 0;
 
@@ -162,7 +161,6 @@ dsd_block_ff::~dsd_block_ff ()
   {
     printf("Unable to unlock mutex\n");
   }
-  printf("Unlocked output mutex\n");
   free(params.state.output_buffer);
 }
 

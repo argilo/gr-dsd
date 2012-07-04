@@ -289,7 +289,6 @@ liveScanner (dsd_opts * opts, dsd_state * state)
         {
           printf("liveScanner -> Unable to lock mutex\n");
         }
-      printf("liveScanner -> Locked input mutex\n");
     }
   while (1)
     {
