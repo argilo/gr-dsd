@@ -4,7 +4,28 @@
   <key>dsd_block_ff</key>
   <category>DSD</category>
   <import>import dsd</import>
-  <make>dsd.block_ff()</make>
+  <make>dsd.block_ff($verbosity)</make>
+  <param>
+    <name>Verbosity</name>
+    <key>verbosity</key>
+    <type>enum</type>
+    <option>
+      <name>Low</name>
+      <key>0</key>
+    </option>
+    <option>
+      <name>Medium</name>
+      <key>1</key>
+    </option>
+    <option>
+      <name>High</name>
+      <key>2</key>
+    </option>
+    <option>
+      <name>Extra high</name>
+      <key>3</key>
+    </option>
+  </param>
 
   <sink>
     <name>in</name>

@@ -58,7 +58,7 @@ typedef boost::shared_ptr<dsd_block_ff> dsd_block_ff_sptr;
  * constructor is private.  dsd_make_block_ff is the public
  * interface for creating new instances.
  */
-DSD_API dsd_block_ff_sptr dsd_make_block_ff ();
+DSD_API dsd_block_ff_sptr dsd_make_block_ff (int verbosity);
 
 /*!
  * \brief pass discriminator output through Digital Speech Decoder
@@ -70,14 +70,14 @@ private:
   // The friend declaration allows dsd_make_block_ff to
   // access the private constructor.
 
-  friend DSD_API dsd_block_ff_sptr dsd_make_block_ff ();
+  friend DSD_API dsd_block_ff_sptr dsd_make_block_ff (int verbosity);
 
   dsd_params params;
 
   /*!
    * \brief pass discriminator output thread Digital Speech Decoder
    */
-  dsd_block_ff ();  	// private constructor
+  dsd_block_ff (int verbosity); // private constructor
 
  public:
   ~dsd_block_ff ();	// public destructor

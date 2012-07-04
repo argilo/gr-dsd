@@ -37,9 +37,9 @@
  * a boost shared_ptr.  This is effectively the public constructor.
  */
 dsd_block_ff_sptr
-dsd_make_block_ff ()
+dsd_make_block_ff (int verbosity)
 {
-  return gnuradio::get_initial_sptr(new dsd_block_ff ());
+  return gnuradio::get_initial_sptr(new dsd_block_ff (verbosity));
 }
 
 /*
@@ -66,7 +66,7 @@ void* run_dsd (void *arg)
 /*
  * The private constructor
  */
-dsd_block_ff::dsd_block_ff ()
+dsd_block_ff::dsd_block_ff (int verbosity)
   : gr_sync_decimator ("block_ff",
 	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (float)),
 	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (float)), 6)
@@ -99,8 +99,7 @@ dsd_block_ff::dsd_block_ff ()
   // Hard-code unvoiced quality (-u 10) for now.
   params.opts.uvquality = 10;
 
-  // Hard-code verbosity (-v 1) for now.
-  params.opts.verbose = 1;
+  params.opts.verbose = verbosity;
 
   // Hard-code GFSK optimizations (-mg) for now.
   params.opts.mod_c4fm = 0;
