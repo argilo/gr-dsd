@@ -4,7 +4,7 @@
   <key>dsd_block_ff</key>
   <category>DSD</category>
   <import>import dsd</import>
-  <make>dsd.block_ff($frame,$verbosity)</make>
+  <make>dsd.block_ff($frame,$mod,$verbosity)</make>
   <param>
     <name>Frame type</name>
     <key>frame</key>
@@ -40,6 +40,27 @@
     <option>
       <name>X2-TDMA</name>
       <key>dsd.dsd_FRAME_X2_TDMA</key>
+    </option>
+  </param>
+  <param>
+    <name>Mod. Optimizations</name>
+    <key>mod</key>
+    <type>enum</type>
+    <option>
+      <name>Auto-select</name>
+      <key>dsd.dsd_MOD_AUTO_SELECT</key>
+    </option>
+    <option>
+      <name>C4FM</name>
+      <key>dsd.dsd_MOD_C4FM</key>
+    </option>
+    <option>
+      <name>GFSK</name>
+      <key>dsd.dsd_MOD_GFSK</key>
+    </option>
+    <option>
+      <name>QPSK</name>
+      <key>dsd.dsd_MOD_QPSK</key>
     </option>
   </param>
   <param>

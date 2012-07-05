@@ -37,9 +37,9 @@
  * a boost shared_ptr.  This is effectively the public constructor.
  */
 dsd_block_ff_sptr
-dsd_make_block_ff (dsd_frame_mode frame, int verbosity)
+dsd_make_block_ff (dsd_frame_mode frame, dsd_modulation_optimizations mod, int verbosity)
 {
-  return gnuradio::get_initial_sptr(new dsd_block_ff (frame, verbosity));
+  return gnuradio::get_initial_sptr(new dsd_block_ff (frame, mod, verbosity));
 }
 
 /*
@@ -66,7 +66,7 @@ void* run_dsd (void *arg)
 /*
  * The private constructor
  */
-dsd_block_ff::dsd_block_ff (dsd_frame_mode frame, int verbosity)
+dsd_block_ff::dsd_block_ff (dsd_frame_mode frame, dsd_modulation_optimizations mod, int verbosity)
   : gr_sync_decimator ("block_ff",
 	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (float)),
 	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (float)), 6)
@@ -192,12 +192,37 @@ dsd_block_ff::dsd_block_ff (dsd_frame_mode frame, int verbosity)
 
   params.opts.verbose = verbosity;
 
-  // Hard-code GFSK optimizations (-mg) for now.
-  params.opts.mod_c4fm = 0;
-  params.opts.mod_qpsk = 0;
-  params.opts.mod_gfsk = 1;
-  params.state.rf_mod = 2;
-  printf ("Enabling only GFSK modulation optimizations.\n");
+  if (mod == dsd_MOD_AUTO_SELECT)
+  {
+    params.opts.mod_c4fm = 1;
+    params.opts.mod_qpsk = 1;
+    params.opts.mod_gfsk = 1;
+    params.state.rf_mod = 0;
+  }
+  else if (mod == dsd_MOD_C4FM)
+  {
+    params.opts.mod_c4fm = 1;
+    params.opts.mod_qpsk = 0;
+    params.opts.mod_gfsk = 0;
+    params.state.rf_mod = 0;
+    printf ("Enabling only C4FM modulation optimizations.\n");
+  }
+  else if (mod == dsd_MOD_GFSK)
+  {
+    params.opts.mod_c4fm = 0;
+    params.opts.mod_qpsk = 0;
+    params.opts.mod_gfsk = 1;
+    params.state.rf_mod = 2;
+    printf ("Enabling only GFSK modulation optimizations.\n");
+  }
+  else if (mod == dsd_MOD_QPSK)
+  {
+    params.opts.mod_c4fm = 0;
+    params.opts.mod_qpsk = 1;
+    params.opts.mod_gfsk = 0;
+    params.state.rf_mod = 1;
+    printf ("Enabling only QPSK modulation optimizations.\n");
+  }
 
   // Initialize the mutexes
   if(pthread_mutex_init(&params.state.input_mutex, NULL))
