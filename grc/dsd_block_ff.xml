@@ -4,7 +4,44 @@
   <key>dsd_block_ff</key>
   <category>DSD</category>
   <import>import dsd</import>
-  <make>dsd.block_ff($verbosity)</make>
+  <make>dsd.block_ff($frame,$verbosity)</make>
+  <param>
+    <name>Frame type</name>
+    <key>frame</key>
+    <type>enum</type>
+    <option>
+      <name>Auto-detect</name>
+      <key>dsd.dsd_FRAME_AUTO_DETECT</key>
+    </option>
+    <option>
+      <name>P25 Phase 1</name>
+      <key>dsd.dsd_FRAME_P25_PHASE_1</key>
+    </option>
+    <option>
+      <name>D-STAR* (no audio)</name>
+      <key>dsd.dsd_FRAME_DSTAR</key>
+    </option>
+    <option>
+      <name>NXDN48* (6.25 kHz) / IDAS*</name>
+      <key>dsd.dsd_FRAME_NXDN48_IDAS</key>
+    </option>
+    <option>
+      <name>NXDN96 (12.5 kHz)</name>
+      <key>dsd.dsd_FRAME_NXDN96</key>
+    </option>
+    <option>
+      <name>ProVoice*</name>
+      <key>dsd.dsd_FRAME_PROVOICE</key>
+    </option>
+    <option>
+      <name>DMR/MOTOTRBO</name>
+      <key>dsd.dsd_FRAME_DMR_MOTOTRBO</key>
+    </option>
+    <option>
+      <name>X2-TDMA</name>
+      <key>dsd.dsd_FRAME_X2_TDMA</key>
+    </option>
+  </param>
   <param>
     <name>Verbosity</name>
     <key>verbosity</key>

@@ -37,9 +37,9 @@
  * a boost shared_ptr.  This is effectively the public constructor.
  */
 dsd_block_ff_sptr
-dsd_make_block_ff (int verbosity)
+dsd_make_block_ff (dsd_frame_mode frame, int verbosity)
 {
-  return gnuradio::get_initial_sptr(new dsd_block_ff (verbosity));
+  return gnuradio::get_initial_sptr(new dsd_block_ff (frame, verbosity));
 }
 
 /*
@@ -66,7 +66,7 @@ void* run_dsd (void *arg)
 /*
  * The private constructor
  */
-dsd_block_ff::dsd_block_ff (int verbosity)
+dsd_block_ff::dsd_block_ff (dsd_frame_mode frame, int verbosity)
   : gr_sync_decimator ("block_ff",
 	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (float)),
 	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (float)), 6)
@@ -78,23 +78,114 @@ dsd_block_ff::dsd_block_ff (int verbosity)
   params.opts.playoffset = 0;
   params.opts.delay = 0;
 
-  // Hard-code Provoice options (-fp) for now.
-  params.opts.frame_dstar = 0;
-  params.opts.frame_x2tdma = 0;
-  params.opts.frame_p25p1 = 0;
-  params.opts.frame_nxdn48 = 0;
-  params.opts.frame_nxdn96 = 0;
-  params.opts.frame_dmr = 0;
-  params.opts.frame_provoice = 1;
-  params.state.samplesPerSymbol = 5;
-  params.state.symbolCenter = 2;
-  params.opts.mod_c4fm = 0;
-  params.opts.mod_qpsk = 0;
-  params.opts.mod_gfsk = 1;
-  params.state.rf_mod = 2;
-  printf ("Setting symbol rate to 9600 / second\n");
-  printf ("Enabling only GFSK modulation optimizations.\n");
-  printf ("Decoding only ProVoice frames.\n");
+  if (frame == dsd_FRAME_AUTO_DETECT)
+  {
+    params.opts.frame_dstar = 0;
+    params.opts.frame_x2tdma = 1;
+    params.opts.frame_p25p1 = 1;
+    params.opts.frame_nxdn48 = 0;
+    params.opts.frame_nxdn96 = 1;
+    params.opts.frame_dmr = 1;
+    params.opts.frame_provoice = 0;
+  }
+  else if (frame == dsd_FRAME_DSTAR)
+  {
+    params.opts.frame_dstar = 1;
+    params.opts.frame_x2tdma = 0;
+    params.opts.frame_p25p1 = 0;
+    params.opts.frame_nxdn48 = 0;
+    params.opts.frame_nxdn96 = 0;
+    params.opts.frame_dmr = 0;
+    params.opts.frame_provoice = 0;
+    printf ("Decoding only D-STAR frames.\n");
+  }
+  else if (frame == dsd_FRAME_X2_TDMA)
+  {
+    params.opts.frame_dstar = 0;
+    params.opts.frame_x2tdma = 1;
+    params.opts.frame_p25p1 = 0;
+    params.opts.frame_nxdn48 = 0;
+    params.opts.frame_nxdn96 = 0;
+    params.opts.frame_dmr = 0;
+    params.opts.frame_provoice = 0;
+    printf ("Decoding only X2-TDMA frames.\n");
+  }
+  else if (frame == dsd_FRAME_PROVOICE)
+  {
+    params.opts.frame_dstar = 0;
+    params.opts.frame_x2tdma = 0;
+    params.opts.frame_p25p1 = 0;
+    params.opts.frame_nxdn48 = 0;
+    params.opts.frame_nxdn96 = 0;
+    params.opts.frame_dmr = 0;
+    params.opts.frame_provoice = 1;
+    params.state.samplesPerSymbol = 5;
+    params.state.symbolCenter = 2;
+    params.opts.mod_c4fm = 0;
+    params.opts.mod_qpsk = 0;
+    params.opts.mod_gfsk = 1;
+    params.state.rf_mod = 2;
+    printf ("Setting symbol rate to 9600 / second\n");
+    printf ("Enabling only GFSK modulation optimizations.\n");
+    printf ("Decoding only ProVoice frames.\n");
+  }
+  else if (frame == dsd_FRAME_P25_PHASE_1)
+  {
+    params.opts.frame_dstar = 0;
+    params.opts.frame_x2tdma = 0;
+    params.opts.frame_p25p1 = 1;
+    params.opts.frame_nxdn48 = 0;
+    params.opts.frame_nxdn96 = 0;
+    params.opts.frame_dmr = 0;
+    params.opts.frame_provoice = 0;
+    printf ("Decoding only P25 Phase 1 frames.\n");
+  }
+  else if (frame == dsd_FRAME_NXDN48_IDAS)
+  {
+    params.opts.frame_dstar = 0;
+    params.opts.frame_x2tdma = 0;
+    params.opts.frame_p25p1 = 0;
+    params.opts.frame_nxdn48 = 1;
+    params.opts.frame_nxdn96 = 0;
+    params.opts.frame_dmr = 0;
+    params.opts.frame_provoice = 0;
+    params.state.samplesPerSymbol = 20;
+    params.state.symbolCenter = 10;
+    params.opts.mod_c4fm = 0;
+    params.opts.mod_qpsk = 0;
+    params.opts.mod_gfsk = 1;
+    params.state.rf_mod = 2;
+    printf ("Setting symbol rate to 2400 / second\n");
+    printf ("Enabling only GFSK modulation optimizations.\n");
+    printf ("Decoding only NXDN 4800 baud frames.\n");
+  }
+  else if (frame == dsd_FRAME_NXDN96)
+  {
+    params.opts.frame_dstar = 0;
+    params.opts.frame_x2tdma = 0;
+    params.opts.frame_p25p1 = 0;
+    params.opts.frame_nxdn48 = 0;
+    params.opts.frame_nxdn96 = 1;
+    params.opts.frame_dmr = 0;
+    params.opts.frame_provoice = 0;
+    params.opts.mod_c4fm = 0;
+    params.opts.mod_qpsk = 0;
+    params.opts.mod_gfsk = 1;
+    params.state.rf_mod = 2;
+    printf ("Enabling only GFSK modulation optimizations.\n");
+    printf ("Decoding only NXDN 9600 baud frames.\n");
+  }
+  else if (frame == dsd_FRAME_DMR_MOTOTRBO)
+  {
+    params.opts.frame_dstar = 0;
+    params.opts.frame_x2tdma = 0;
+    params.opts.frame_p25p1 = 0;
+    params.opts.frame_nxdn48 = 0;
+    params.opts.frame_nxdn96 = 0;
+    params.opts.frame_dmr = 1;
+    params.opts.frame_provoice = 0;
+    printf ("Decoding only DMR/MOTOTRBO frames.\n");
+  }
 
   // Hard-code unvoiced quality (-u 10) for now.
   params.opts.uvquality = 10;

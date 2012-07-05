@@ -30,6 +30,17 @@ extern "C"
   #include <dsd.h>
 }
 
+enum dsd_frame_mode {
+  dsd_FRAME_AUTO_DETECT,
+  dsd_FRAME_P25_PHASE_1,
+  dsd_FRAME_DSTAR,
+  dsd_FRAME_NXDN48_IDAS,
+  dsd_FRAME_NXDN96,
+  dsd_FRAME_PROVOICE,
+  dsd_FRAME_DMR_MOTOTRBO,
+  dsd_FRAME_X2_TDMA
+};
+
 typedef struct
 {
   dsd_opts opts;
@@ -58,7 +69,7 @@ typedef boost::shared_ptr<dsd_block_ff> dsd_block_ff_sptr;
  * constructor is private.  dsd_make_block_ff is the public
  * interface for creating new instances.
  */
-DSD_API dsd_block_ff_sptr dsd_make_block_ff (int verbosity);
+DSD_API dsd_block_ff_sptr dsd_make_block_ff (dsd_frame_mode frame, int verbosity);
 
 /*!
  * \brief pass discriminator output through Digital Speech Decoder
@@ -70,14 +81,14 @@ private:
   // The friend declaration allows dsd_make_block_ff to
   // access the private constructor.
 
-  friend DSD_API dsd_block_ff_sptr dsd_make_block_ff (int verbosity);
+  friend DSD_API dsd_block_ff_sptr dsd_make_block_ff (dsd_frame_mode frame, int verbosity);
 
   dsd_params params;
 
   /*!
    * \brief pass discriminator output thread Digital Speech Decoder
    */
-  dsd_block_ff (int verbosity); // private constructor
+  dsd_block_ff (dsd_frame_mode frame, int verbosity); // private constructor
 
  public:
   ~dsd_block_ff ();	// public destructor
