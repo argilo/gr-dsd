@@ -18,11 +18,11 @@
       <key>dsd.dsd_FRAME_P25_PHASE_1</key>
     </option>
     <option>
-      <name>D-STAR* (no audio)</name>
+      <name>D-STAR (no audio)</name>
       <key>dsd.dsd_FRAME_DSTAR</key>
     </option>
     <option>
-      <name>NXDN48* (6.25 kHz) / IDAS*</name>
+      <name>NXDN48 (6.25 kHz) / IDAS</name>
       <key>dsd.dsd_FRAME_NXDN48_IDAS</key>
     </option>
     <option>
@@ -30,7 +30,7 @@
       <key>dsd.dsd_FRAME_NXDN96</key>
     </option>
     <option>
-      <name>ProVoice*</name>
+      <name>ProVoice</name>
       <key>dsd.dsd_FRAME_PROVOICE</key>
     </option>
     <option>
