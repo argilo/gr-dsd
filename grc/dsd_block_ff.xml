@@ -4,7 +4,7 @@
   <key>dsd_block_ff</key>
   <category>DSD</category>
   <import>import dsd</import>
-  <make>dsd.block_ff($frame,$mod,$verbosity)</make>
+  <make>dsd.block_ff($frame,$mod,$uvquality,$verbosity)</make>
   <param>
     <name>Frame type</name>
     <key>frame</key>
@@ -62,6 +62,12 @@
       <name>QPSK</name>
       <key>dsd.dsd_MOD_QPSK</key>
     </option>
+  </param>
+  <param>
+    <name>Unvoiced Quality</name>
+    <key>uvquality</key>
+    <value>3</value>
+    <type>int</type>
   </param>
   <param>
     <name>Verbosity</name>
