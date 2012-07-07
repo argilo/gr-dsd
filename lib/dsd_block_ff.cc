@@ -37,9 +37,9 @@
  * a boost shared_ptr.  This is effectively the public constructor.
  */
 dsd_block_ff_sptr
-dsd_make_block_ff (dsd_frame_mode frame, dsd_modulation_optimizations mod, int uvquality, int verbosity, int errorbars)
+dsd_make_block_ff (dsd_frame_mode frame, dsd_modulation_optimizations mod, int uvquality, bool errorbars, int verbosity)
 {
-  return gnuradio::get_initial_sptr(new dsd_block_ff (frame, mod, uvquality, verbosity, errorbars));
+  return gnuradio::get_initial_sptr(new dsd_block_ff (frame, mod, uvquality, errorbars, verbosity));
 }
 
 /*
@@ -66,7 +66,7 @@ void* run_dsd (void *arg)
 /*
  * The private constructor
  */
-dsd_block_ff::dsd_block_ff (dsd_frame_mode frame, dsd_modulation_optimizations mod, int uvquality, int verbosity, int errorbars)
+dsd_block_ff::dsd_block_ff (dsd_frame_mode frame, dsd_modulation_optimizations mod, int uvquality, bool errorbars, int verbosity)
   : gr_sync_decimator ("block_ff",
 	      gr_make_io_signature (MIN_IN, MAX_IN, sizeof (float)),
 	      gr_make_io_signature (MIN_OUT, MAX_OUT, sizeof (float)), 6)

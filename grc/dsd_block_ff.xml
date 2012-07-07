@@ -70,8 +70,23 @@
     <type>int</type>
   </param>
   <param>
+    <name>Show Error Bars</name>
+    <key>errorbars</key>
+    <value>True</value>
+    <type>bool</type>
+    <option>
+      <name>No</name>
+      <key>False</key>
+    </option>
+    <option>
+      <name>Yes</name>
+      <key>True</key>
+    </option>
+  </param>
+  <param>
     <name>Verbosity</name>
     <key>verbosity</key>
+    <value>2</value>
     <type>enum</type>
     <option>
       <name>Low</name>
@@ -88,20 +103,6 @@
     <option>
       <name>Extra high</name>
       <key>3</key>
-    </option>
-  </param>
-  <param>
-    <name>Error Bars</name>
-    <key>errorbars</key>
-    <value>True</value>
-    <type>bool</type>
-    <option>
-      <name>Off</name>
-      <key>False</key>
-    </option>
-    <option>
-      <name>On</name>
-      <key>True</key>
     </option>
   </param>
 
