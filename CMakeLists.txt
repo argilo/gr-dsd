@@ -98,7 +98,7 @@ if(NOT GNURADIO_RUNTIME_FOUND)
     message(FATAL_ERROR "GnuRadio Runtime required to compile gr-dsd")
 endif()
 if(NOT CPPUNIT_FOUND)
-    message(FATAL_ERROR "CppUnit required to compile elster")
+    message(FATAL_ERROR "CppUnit required to compile gr-dsd")
 endif()
 
 ########################################################################
