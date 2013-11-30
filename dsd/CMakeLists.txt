@@ -17,6 +17,7 @@
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -idirafter /usr/local/include/gnuradio")
 add_library(dsd dmr_data.c dmr_voice.c dsd_audio.c dsd_dibit.c dsd_file.c dsd_frame.c dsd_frame_sync.c dsd_main.c dsd_mbe.c dsd_serial.c dsd_symbol.c dsd_upsample.c dstar.c nxdn96.c nxdn_data.c nxdn_voice.c p25_lcw.c p25p1_hdu.c p25p1_ldu1.c p25p1_ldu2.c p25p1_tdulc.c provoice.c x2tdma_data.c x2tdma_voice.c)
 target_link_libraries(dsd mbe)
 add_definitions(-fPIC)

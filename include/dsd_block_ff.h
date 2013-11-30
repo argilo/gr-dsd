@@ -23,7 +23,7 @@
 #define INCLUDED_DSD_BLOCK_FF_H
 
 #include <dsd_api.h>
-#include <gr_sync_decimator.h>
+#include <gnuradio/sync_decimator.h>
 
 extern "C"
 {
@@ -84,7 +84,7 @@ DSD_API dsd_block_ff_sptr dsd_make_block_ff (dsd_frame_mode frame = dsd_FRAME_AU
  * \brief pass discriminator output through Digital Speech Decoder
  * \ingroup block
  */
-class DSD_API dsd_block_ff : public gr_sync_decimator
+class DSD_API dsd_block_ff : public gr::sync_decimator
 {
 private:
   // The friend declaration allows dsd_make_block_ff to

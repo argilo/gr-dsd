@@ -17,5 +17,6 @@
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -idirafter /usr/local/include/gnuradio")
 add_library(mbe ambe3600x2250.c ecc.c imbe7100x4400.c imbe7200x4400.c mbelib.c)
 add_definitions(-fPIC)

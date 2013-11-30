@@ -23,7 +23,7 @@
 include(GrPlatform) #define LIB_SUFFIX
 
 add_library(gr-dsd SHARED dsd_block_ff.cc)
-target_link_libraries(gr-dsd dsd ${Boost_LIBRARIES} ${GRUEL_LIBRARIES} ${GNURADIO_CORE_LIBRARIES})
+target_link_libraries(gr-dsd dsd ${Boost_LIBRARIES} ${GNURADIO_RUNTIME_LIBRARIES})
 set_target_properties(gr-dsd PROPERTIES DEFINE_SYMBOL "gnuradio_dsd_EXPORTS")
 
 ########################################################################

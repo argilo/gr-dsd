@@ -22,7 +22,7 @@
 #ifndef INCLUDED_DSD_API_H
 #define INCLUDED_DSD_API_H
 
-#include <gruel/attributes.h>
+#include <gnuradio/attributes.h>
 
 #ifdef gnuradio_dsd_EXPORTS
 #  define DSD_API __GR_ATTR_EXPORT
