@@ -82,7 +82,7 @@ dsd_block_ff::dsd_block_ff (dsd_frame_mode frame, dsd_modulation_optimizations m
 
   if (frame == dsd_FRAME_AUTO_DETECT)
   {
-    params.opts.frame_dstar = 0;
+    params.opts.frame_dstar = 1;
     params.opts.frame_x2tdma = 1;
     params.opts.frame_p25p1 = 1;
     params.opts.frame_nxdn48 = 0;
