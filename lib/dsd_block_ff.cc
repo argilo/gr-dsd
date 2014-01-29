@@ -77,6 +77,8 @@ dsd_block_ff::dsd_block_ff (dsd_frame_mode frame, dsd_modulation_optimizations m
   params.opts.split = 1;
   params.opts.playoffset = 0;
   params.opts.delay = 0;
+  params.opts.audio_in_type = 0;
+  params.opts.audio_out_type = 0;
 
   if (frame == dsd_FRAME_AUTO_DETECT)
   {
