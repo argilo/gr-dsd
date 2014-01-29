@@ -177,8 +177,13 @@ getDibit (dsd_opts * opts, dsd_state * state)
       state->sidx++;
     }
 
+  if (state->dibit_buf_p > state->dibit_buf + 900000)
+    {
+	  state->dibit_buf_p = state->dibit_buf + 200;
+    }
+
   // determine dibit state
-  if ((state->synctype == 6) || (state->synctype == 14))
+  if ((state->synctype == 6) || (state->synctype == 14)|| (state->synctype == 18))
     {
       if (symbol > state->center)
         {
@@ -193,7 +198,7 @@ getDibit (dsd_opts * opts, dsd_state * state)
           return (1);
         }
     }
-  else if ((state->synctype == 7) || (state->synctype == 15))
+  else if ((state->synctype == 7) || (state->synctype == 15)|| (state->synctype == 19))
     {
       if (symbol > state->center)
         {

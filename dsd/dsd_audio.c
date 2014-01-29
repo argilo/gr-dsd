@@ -90,14 +90,16 @@ processAudio (dsd_opts * opts, dsd_state * state)
       gaindelta = (float) 0;
     }
 
-  // adjust output gain
-  state->audio_out_temp_buf_p = state->audio_out_temp_buf;
-  for (n = 0; n < 160; n++)
-    {
-      *state->audio_out_temp_buf_p = (state->aout_gain + ((float) n * gaindelta)) * (*state->audio_out_temp_buf_p);
-      state->audio_out_temp_buf_p++;
-    }
-  state->aout_gain += ((float) 160 * gaindelta);
+  if(opts->audio_gain >= 0){
+    // adjust output gain
+    state->audio_out_temp_buf_p = state->audio_out_temp_buf;
+    for (n = 0; n < 160; n++)
+      {
+        *state->audio_out_temp_buf_p = (state->aout_gain + ((float) n * gaindelta)) * (*state->audio_out_temp_buf_p);
+        state->audio_out_temp_buf_p++;
+      }
+    state->aout_gain += ((float) 160 * gaindelta);
+  }
 
   // copy audio datat to output buffer and upsample if necessary
   state->audio_out_temp_buf_p = state->audio_out_temp_buf;
@@ -153,6 +155,34 @@ processAudio (dsd_opts * opts, dsd_state * state)
 void
 writeSynthesizedVoice (dsd_opts * opts, dsd_state * state)
 {
+  int n;
+  short aout_buf[160];
+  short *aout_buf_p;
+
+//  for(n=0; n<160; n++)
+//    printf("%d ", ((short*)(state->audio_out_temp_buf))[n]);
+//  printf("\n");
+  
+  aout_buf_p = aout_buf;
+  state->audio_out_temp_buf_p = state->audio_out_temp_buf;
+
+  for (n = 0; n < 160; n++)
+  {
+    if (*state->audio_out_temp_buf_p > (float) 32767)
+      {
+        *state->audio_out_temp_buf_p = (float) 32767;
+      }
+    else if (*state->audio_out_temp_buf_p < (float) -32768)
+      {
+        *state->audio_out_temp_buf_p = (float) -32768;
+      }
+      *aout_buf_p = (short) *state->audio_out_temp_buf_p;
+      aout_buf_p++;
+      state->audio_out_temp_buf_p++;
+  }
+
+  sf_write_short(opts->wav_out_f, aout_buf, 160);
+  /*
 
   int n;
   short aout_buf[160];
@@ -179,6 +209,7 @@ writeSynthesizedVoice (dsd_opts * opts, dsd_state * state)
   result = write (opts->wav_out_fd, aout_buf, 320);
   fflush (opts->wav_out_f);
   state->wav_out_bytes += 320;
+  */
 }
 
 void
@@ -215,7 +246,17 @@ playSynthesizedVoice (dsd_opts * opts, dsd_state * state)
 void
 openAudioOutDevice (dsd_opts * opts, int speed)
 {
+  // get info of device/file
+  struct stat stat_buf;
+  if(stat(opts->audio_out_dev, &stat_buf) != 0) {
+    printf("Error, couldn't open %s\n", opts->audio_out_dev);
+    exit(1);
+  }
 
+  if( !(S_ISCHR(stat_buf.st_mode) || S_ISBLK(stat_buf.st_mode))) { // this is not a device
+    printf("Error, %s is not a device. use -w filename for wav output.\n", opts->audio_out_dev);
+    exit(1);
+  }
 #ifdef SOLARIS
   sample_info_t aset, aget;
 
@@ -245,7 +286,7 @@ openAudioOutDevice (dsd_opts * opts, int speed)
     }
 #endif
 
-#ifdef BSD
+#if defined(BSD) && !defined(__APPLE__)
 
   int fmt;
 
@@ -254,6 +295,7 @@ openAudioOutDevice (dsd_opts * opts, int speed)
     {
       printf ("Error, couldn't open %s\n", opts->audio_out_dev);
       opts->audio_out = 0;
+      exit(1);
     }
 
   fmt = 0;
@@ -278,94 +320,111 @@ openAudioOutDevice (dsd_opts * opts, int speed)
     }
 
 #endif
-
   printf ("Audio Out Device: %s\n", opts->audio_out_dev);
 }
 
 void
 openAudioInDevice (dsd_opts * opts)
 {
-
+  // get info of device/file
+  struct stat stat_buf;
+  if (stat(opts->audio_in_dev, &stat_buf) != 0) {
+    printf("Error, couldn't open %s\n", opts->audio_in_dev);
+    exit(1);
+  }
+  if(S_ISREG(stat_buf.st_mode)) { // is this a regular file? then process with libsndfile.
+    opts->audio_in_type = 1;
+    opts->audio_in_file_info = calloc(1, sizeof(SF_INFO));
+    opts->audio_in_file_info->channels = 1;
+    opts->audio_in_file = sf_open(opts->audio_in_dev, SFM_READ, opts->audio_in_file_info);
+    if(opts->audio_in_file == NULL) {
+        printf ("Error, couldn't open file %s\n", opts->audio_in_dev);
+        exit(1);
+    }
+  }
+  else { // this is a device, use old handling
+  opts->audio_in_type = 0;
 #ifdef SOLARIS
-  sample_info_t aset, aget;
-  int rgain;
-
-  rgain = 64;
-
-  if (opts->split == 1)
-    {
-      opts->audio_in_fd = open (opts->audio_in_dev, O_RDONLY);
-    }
-  else
-    {
-      opts->audio_in_fd = open (opts->audio_in_dev, O_RDWR);
-    }
-  if (opts->audio_in_fd == -1)
-    {
-      printf ("Error, couldn't open /dev/audio\n");
-    }
-
-  // get current
-  ioctl (opts->audio_in_fd, AUDIO_GETINFO, &aset);
-
-  aset.record.sample_rate = 48000;
-  aset.play.sample_rate = 48000;
-  aset.record.channels = 1;
-  aset.play.channels = 1;
-  aset.record.precision = 16;
-  aset.play.precision = 16;
-  aset.record.encoding = AUDIO_ENCODING_LINEAR;
-  aset.play.encoding = AUDIO_ENCODING_LINEAR;
-  aset.record.port = AUDIO_LINE_IN;
-  aset.record.gain = rgain;
-
-  if (ioctl (opts->audio_in_fd, AUDIO_SETINFO, &aset) == -1)
-    {
-      printf ("Error setting sample device parameters\n");
-      exit (1);
-    }
+    sample_info_t aset, aget;
+    int rgain;
+  
+    rgain = 64;
+  
+    if (opts->split == 1)
+      {
+        opts->audio_in_fd = open (opts->audio_in_dev, O_RDONLY);
+      }
+    else
+      {
+        opts->audio_in_fd = open (opts->audio_in_dev, O_RDWR);
+      }
+    if (opts->audio_in_fd == -1)
+      {
+        printf ("Error, couldn't open %s\n", opts->audio_in_dev);
+        exit(1);
+      }
+  
+    // get current
+    ioctl (opts->audio_in_fd, AUDIO_GETINFO, &aset);
+  
+    aset.record.sample_rate = 48000;
+    aset.play.sample_rate = 48000;
+    aset.record.channels = 1;
+    aset.play.channels = 1;
+    aset.record.precision = 16;
+    aset.play.precision = 16;
+    aset.record.encoding = AUDIO_ENCODING_LINEAR;
+    aset.play.encoding = AUDIO_ENCODING_LINEAR;
+    aset.record.port = AUDIO_LINE_IN;
+    aset.record.gain = rgain;
+  
+    if (ioctl (opts->audio_in_fd, AUDIO_SETINFO, &aset) == -1)
+      {
+        printf ("Error setting sample device parameters\n");
+        exit (1);
+      }
 #endif
 
-#ifdef BSD
-  int fmt;
-
-  if (opts->split == 1)
-    {
-      opts->audio_in_fd = open (opts->audio_in_dev, O_RDONLY);
-    }
-  else
-    {
-      opts->audio_in_fd = open (opts->audio_in_dev, O_RDWR);
-    }
-
-  if (opts->audio_in_fd == -1)
-    {
-      printf ("Error, couldn't open %s\n", opts->audio_in_dev);
-      opts->audio_out = 0;
-    }
-
-  fmt = 0;
-  if (ioctl (opts->audio_in_fd, SNDCTL_DSP_RESET) < 0)
-    {
-      printf ("ioctl reset error \n");
-    }
-  fmt = 48000;
-  if (ioctl (opts->audio_in_fd, SNDCTL_DSP_SPEED, &fmt) < 0)
-    {
-      printf ("ioctl speed error \n");
-    }
-  fmt = 0;
-  if (ioctl (opts->audio_in_fd, SNDCTL_DSP_STEREO, &fmt) < 0)
-    {
-      printf ("ioctl stereo error \n");
-    }
-  fmt = AFMT_S16_LE;
-  if (ioctl (opts->audio_in_fd, SNDCTL_DSP_SETFMT, &fmt) < 0)
-    {
-      printf ("ioctl setfmt error \n");
-    }
+#if defined(BSD) && !defined(__APPLE__)
+    int fmt;
+  
+    if (opts->split == 1)
+      {
+        opts->audio_in_fd = open (opts->audio_in_dev, O_RDONLY);
+      }
+    else
+      {
+        opts->audio_in_fd = open (opts->audio_in_dev, O_RDWR);
+      }
+  
+    if (opts->audio_in_fd == -1)
+      {
+        printf ("Error, couldn't open %s\n", opts->audio_in_dev);
+        opts->audio_out = 0;
+      }
+  
+    fmt = 0;
+    if (ioctl (opts->audio_in_fd, SNDCTL_DSP_RESET) < 0)
+      {
+        printf ("ioctl reset error \n");
+      }
+    fmt = 48000;
+    if (ioctl (opts->audio_in_fd, SNDCTL_DSP_SPEED, &fmt) < 0)
+      {
+        printf ("ioctl speed error \n");
+      }
+    fmt = 0;
+    if (ioctl (opts->audio_in_fd, SNDCTL_DSP_STEREO, &fmt) < 0)
+      {
+        printf ("ioctl stereo error \n");
+      }
+    fmt = AFMT_S16_LE;
+    if (ioctl (opts->audio_in_fd, SNDCTL_DSP_SETFMT, &fmt) < 0)
+      {
+        printf ("ioctl setfmt error \n");
+      }
 #endif
-
+  }
   if (opts->split == 1)
     {
       printf ("Audio In Device: %s\n", opts->audio_in_dev);

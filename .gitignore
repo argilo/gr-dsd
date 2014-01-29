@@ -5,8 +5,10 @@ CTestTestfile.cmake
 CMakeFiles/
 Makefile
 install_manifest.txt
-*.a
-*.so
+*.[ao]
+*.so*
+*.dylib
+/build
 *.pyc
 *.pyo
 /swig/_*

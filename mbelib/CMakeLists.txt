@@ -1,22 +1,32 @@
-# Copyright 2012 Clayton Smith
-#
-# This file is part of gr-dsd
-#
-# gr-dsd is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-#
-# gr-dsd is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with gr-dsd; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
+project(mbe)
+cmake_minimum_required(VERSION 2.6)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -idirafter /usr/local/include/gnuradio")
-add_library(mbe ambe3600x2250.c ecc.c imbe7100x4400.c imbe7200x4400.c mbelib.c)
-add_definitions(-fPIC)
+FILE(GLOB SRCS *.c)
+
+include_directories("${PROJECT_SOURCE_DIR}")
+
+ADD_LIBRARY(mbe-static STATIC ${SRCS})
+ADD_LIBRARY(mbe-shared SHARED ${SRCS})
+TARGET_LINK_LIBRARIES(mbe-static m)
+TARGET_LINK_LIBRARIES(mbe-shared m)
+
+install(TARGETS mbe-static mbe-shared DESTINATION lib)
+install (FILES "${PROJECT_SOURCE_DIR}/mbelib.h" DESTINATION include)
+
+set_target_properties(mbe-static mbe-shared PROPERTIES OUTPUT_NAME mbe
+                      VERSION 1.0 SOVERSION 1 INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/lib )
+
+# uninstall target
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+
+option(DISABLE_TEST "Disable building of test framework." OFF)
+
+if (NOT DISABLE_TEST)
+    add_subdirectory(test)
+endif()

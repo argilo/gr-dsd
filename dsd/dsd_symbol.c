@@ -78,66 +78,83 @@ getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
             }
           state->jitter = -1;
         }
-
-      if (opts->audio_in_fd == -1)
-        {
-          while (state->input_length == 0)
+      if(opts->audio_in_type == 0) {
+          if (opts->audio_in_fd == -1)
             {
-              // If the buffer is empty, wait for more samples to arrive.
-              if (pthread_cond_wait(&state->input_ready, &state->input_mutex))
+              while (state->input_length == 0)
                 {
-                  printf("getSymbol -> Error waiting for condition\n");
+                  // If the buffer is empty, wait for more samples to arrive.
+                  if (pthread_cond_wait(&state->input_ready, &state->input_mutex))
+                    {
+                      printf("getSymbol -> Error waiting for condition\n");
+                    }
+                }
+              // Get the next sample from the buffer, converting from float to short.
+              sample = (short) (state->input_samples[state->input_offset++] * 32768);
+              if (state->input_offset == state->input_length)
+                {
+                  int i;
+
+                  // We've reached the end of the buffer.  Wait for more next time.
+                  state->input_length = 0;
+
+                  if (pthread_mutex_lock(&state->output_mutex))
+                    {
+                      printf("Unable to lock mutex\n");
+                    }
+
+                  state->output_num_samples = state->output_offset;
+                  if (state->output_num_samples > state->output_length) {
+                    state->output_num_samples = state->output_length;
+                  }
+                  for (i = 0; i < state->output_length - state->output_num_samples; i++)
+                    {
+                      state->output_samples[i] = 0;
+                    }
+                  for (; i < state->output_length; i++)
+                    {
+                      state->output_samples[i] = state->output_buffer[i - (state->output_length - state->output_num_samples)] / 32768.0;
+                    }
+                  state->output_offset -= state->output_num_samples;
+                  for (i = 0; i < state->output_offset; i++)
+                    {
+                      state->output_buffer[i] = state->output_buffer[i + state->output_num_samples];
+                    }
+                  state->output_finished = 1;
+
+                  // Wake up general_work
+                  if (pthread_cond_signal(&state->output_ready))
+                    {
+                      printf("Unable to signal\n");
+                    }
+
+                  if (pthread_mutex_unlock(&state->output_mutex))
+                    {
+                      printf("Unable to unlock mutex\n");
+                    }
                 }
             }
-          // Get the next sample from the buffer, converting from float to short.
-          sample = (short) (state->input_samples[state->input_offset++] * 32768);
-          if (state->input_offset == state->input_length)
+          else
             {
-              int i;
-
-              // We've reached the end of the buffer.  Wait for more next time.
-              state->input_length = 0;
-
-              if (pthread_mutex_lock(&state->output_mutex))
-                {
-                  printf("Unable to lock mutex\n");
-                }
-
-              state->output_num_samples = state->output_offset;
-              if (state->output_num_samples > state->output_length) {
-                state->output_num_samples = state->output_length;
-              }
-              for (i = 0; i < state->output_length - state->output_num_samples; i++)
-                {
-                  state->output_samples[i] = 0;
-                }
-              for (; i < state->output_length; i++)
-                {
-                  state->output_samples[i] = state->output_buffer[i - (state->output_length - state->output_num_samples)] / 32768.0;
-                }
-              state->output_offset -= state->output_num_samples;
-              for (i = 0; i < state->output_offset; i++)
-                {
-                  state->output_buffer[i] = state->output_buffer[i + state->output_num_samples];
-                }
-              state->output_finished = 1;
-
-              // Wake up general_work
-              if (pthread_cond_signal(&state->output_ready))
-                {
-                  printf("Unable to signal\n");
-              }
-
-              if (pthread_mutex_unlock(&state->output_mutex))
-                {
-                  printf("Unable to unlock mutex\n");
-                }
+              result = read (opts->audio_in_fd, &sample, 2);
             }
-        }
-      else
-        {
-          result = read (opts->audio_in_fd, &sample, 2);
-        }
+
+      }
+      else {
+          result = sf_read_short(opts->audio_in_file, &sample, 1);
+          if(result == 0) {
+              cleanupAndExit (opts, state);
+          }
+      }
+     // printf("res: %zd\n, offset: %lld", result, sf_seek(opts->audio_in_file, 0, SEEK_CUR));
+      if (opts->use_cosine_filter)
+      {
+        if (state->lastsynctype >= 10 && state->lastsynctype <= 13)
+          sample = dmr_filter(sample);
+        else if (state->lastsynctype == 8 || state->lastsynctype == 9 ||
+                 state->lastsynctype == 16 || state->lastsynctype == 17)
+          sample = nxdn_filter(sample);
+      }
 
       if ((sample > state->max) && (have_sync == 1) && (state->rf_mod == 0))
         {
