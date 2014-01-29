@@ -28,11 +28,6 @@ a GNU Radio block, so that it can be easily used with software radio
 peripherals such as the Ettus Research USRP or RTL2832U-based USB TV
 tuners.
 
-Note that it is still in an early stage of development.  Not all of
-DSD's configuration options are exposed yet.  I have only tested on
-Ubuntu 12.04 64-bit with GNU Radio 3.6.1, so please let me know if you
-have any trouble building and running it.
-
 Build instructions:
 
     cmake .
