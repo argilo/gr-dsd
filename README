@@ -28,6 +28,11 @@ a GNU Radio block, so that it can be easily used with software radio
 peripherals such as the Ettus Research USRP or RTL2832U-based USB TV
 tuners.
 
+Dependencies:
+
+  * GNU Radio 3.7
+  * libsndfile (libsndfile1-dev package in Ubuntu)
+
 Build instructions:
 
     cmake .
