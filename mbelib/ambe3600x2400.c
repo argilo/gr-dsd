@@ -272,7 +272,7 @@ mbe_decodeAmbe2400Parms (char *ambe_d, mbe_parms * cur_mp, mbe_parms * prev_mp)
       // w0 from patent filings
       //f0 = powf (2, ((float) b0 + (float) 195.626) / -(float) 46.368); // was 45.368
       // w0 guess  
-      f0 = powf(2, (-4.311767578125 - (2.1336e-2 * ((float)b0+0.5))));
+      f0 = powf(2.0, (-4.25831 - (2.177e-2 * ((float)b0))));
       cur_mp->w0 = f0 * (float) 2 *M_PI;
     }
 
