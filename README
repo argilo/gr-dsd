@@ -41,7 +41,7 @@ Build instructions:
     sudo ldconfig
 
 If your GNU Radio is installed in /usr (rather than /usr/local), then
-replace the third line above with:
+replace the first line above with:
 
     cmake -DCMAKE_INSTALL_PREFIX=/usr .
 
