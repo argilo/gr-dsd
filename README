@@ -40,6 +40,11 @@ Build instructions:
     sudo make install
     sudo ldconfig
 
+If your GNU Radio is installed in /usr (rather than /usr/local), then
+replace the third line above with:
+
+    cmake -DCMAKE_INSTALL_PREFIX=/usr .
+
 After running the above commands, "DSD Block" should appear under the
 "DSD" category in GNU Radio Companion, and "block_ff" will be available
 in the "dsd" Python package.
