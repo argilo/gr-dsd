@@ -32,6 +32,10 @@ Dependencies:
 
   * GNU Radio 3.7
   * libsndfile (libsndfile1-dev package in Ubuntu)
+  * BOOST C++ source libraries (libboost-all-dev in Ubuntu)
+  * libcppunit-dev
+  * liblog4cpp5-dev
+  * swig
 
 Build instructions:
 
