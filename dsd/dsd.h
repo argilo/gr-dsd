@@ -15,7 +15,6 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -28,20 +27,9 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
-#ifdef SOLARIS
-#include <sys/audioio.h>
-#endif
-#if defined(BSD) && !defined(__APPLE__)
-#include <sys/soundcard.h>
-#endif
 #include <math.h>
 #include <mbelib.h>
 #include <sndfile.h>
-/*
- * global variables
- */
-int exitflag;
-
 
 typedef struct
 {
@@ -252,7 +240,6 @@ extern void initState (dsd_state * state);
 void usage ();
 extern void liveScanner (dsd_opts * opts, dsd_state * state);
 void cleanupAndExit (dsd_opts * opts, dsd_state * state);
-void sigfun (int sig);
 int main (int argc, char **argv);
 void playMbeFiles (dsd_opts * opts, dsd_state * state, int argc, char **argv);
 void processMbeFrame (dsd_opts * opts, dsd_state * state, char imbe_fr[8][23], char ambe_fr[4][24], char imbe7100_fr[7][24]);

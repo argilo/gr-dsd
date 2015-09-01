@@ -329,13 +329,6 @@ cleanupAndExit (dsd_opts * opts, dsd_state * state)
   exit (0);
 }
 
-void
-sigfun (int sig)
-{
-  exitflag = 1;
-  signal (SIGINT, SIG_DFL);
-}
-
 int
 main (int argc, char **argv)
 {
@@ -353,9 +346,6 @@ main (int argc, char **argv)
 
   initOpts (&opts);
   initState (&state);
-
-  exitflag = 0;
-  signal (SIGINT, sigfun);
 
   while ((c = getopt (argc, argv, "hep:qstv:z:i:o:d:g:nw:B:C:R:f:m:u:x:A:S:M:rl")) != -1)
     {
