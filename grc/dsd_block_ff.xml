@@ -4,7 +4,7 @@
   <key>dsd_block_ff</key>
   <category>DSD</category>
   <import>import dsd</import>
-  <make>dsd.block_ff($frame,$mod,$uvquality,$verbosity,$errorbars)</make>
+  <make>dsd.block_ff($frame,$mod,$uvquality,$errorbars,$verbosity)</make>
   <param>
     <name>Frame type</name>
     <key>frame</key>
