@@ -792,10 +792,12 @@ getFrameSync (dsd_opts * opts, dsd_state * state)
             }
         }
 
+#if 0
       if (exitflag == 1)
         {
           cleanupAndExit (opts, state);
         }
+#endif
 
       if (synctest_pos < 10200)
         {
