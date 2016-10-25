@@ -26,6 +26,8 @@
 #include "provoice_const.h"
 #include "git_ver.h"
 
+#include <pthread.h>
+
 int
 comp (const void *a, const void *b)
 {

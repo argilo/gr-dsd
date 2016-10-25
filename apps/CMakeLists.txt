@@ -17,6 +17,9 @@
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
 
-install(FILES
-    dsd_dsd_block_ff.xml DESTINATION share/gnuradio/grc/blocks
+include(GrPython)
+
+GR_PYTHON_INSTALL(
+    PROGRAMS
+    DESTINATION bin
 )

@@ -1,4 +1,4 @@
-# Copyright 2011 Free Software Foundation, Inc.
+# Copyright 2011,2012,2016 Free Software Foundation, Inc.
 #
 # This file is part of GNU Radio
 #
@@ -22,15 +22,31 @@
 ########################################################################
 include(GrPlatform) #define LIB_SUFFIX
 
-add_library(gr-dsd SHARED dsd_block_ff.cc)
-target_link_libraries(gr-dsd dsd ${Boost_LIBRARIES} ${GNURADIO_RUNTIME_LIBRARIES})
-set_target_properties(gr-dsd PROPERTIES DEFINE_SYMBOL "gnuradio_dsd_EXPORTS")
+include_directories(${Boost_INCLUDE_DIR})
+link_directories(${Boost_LIBRARY_DIRS})
+
+list(APPEND dsd_sources
+    dsd_block_ff_impl.cc
+)
+
+set(dsd_sources "${dsd_sources}" PARENT_SCOPE)
+if(NOT dsd_sources)
+	MESSAGE(STATUS "No C++ sources... skipping lib/")
+	return()
+endif(NOT dsd_sources)
+
+add_library(gnuradio-dsd SHARED ${dsd_sources})
+target_link_libraries(gnuradio-dsd dsd ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES})
+set_target_properties(gnuradio-dsd PROPERTIES DEFINE_SYMBOL "gnuradio_dsd_EXPORTS")
+
+if(APPLE)
+    set_target_properties(gnuradio-dsd PROPERTIES
+        INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib"
+    )
+endif(APPLE)
 
 ########################################################################
 # Install built library files
 ########################################################################
-install(TARGETS gr-dsd
-    LIBRARY DESTINATION lib${LIB_SUFFIX} # .so/.dylib file
-    ARCHIVE DESTINATION lib${LIB_SUFFIX} # .lib file
-    RUNTIME DESTINATION bin              # .dll file
-)
+include(GrMiscUtils)
+GR_LIBRARY_FOO(gnuradio-dsd RUNTIME_COMPONENT "dsd_runtime" DEVEL_COMPONENT "dsd_devel")

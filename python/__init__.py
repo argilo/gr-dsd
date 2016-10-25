@@ -19,36 +19,16 @@
 # The presence of this file turns this directory into a Python package
 
 '''
-This package encapsulates Digital Speech Decoder as a GNU Radio
-block.
+This is the GNU Radio DSD module. Place your Python package
+description here (python/__init__.py).
 '''
 
-# ----------------------------------------------------------------
-# Temporary workaround for ticket:181 (swig+python problem)
-import sys
-_RTLD_GLOBAL = 0
-try:
-    from dl import RTLD_GLOBAL as _RTLD_GLOBAL
-except ImportError:
-    try:
-	from DLFCN import RTLD_GLOBAL as _RTLD_GLOBAL
-    except ImportError:
-	pass
-
-if _RTLD_GLOBAL != 0:
-    _dlopenflags = sys.getdlopenflags()
-    sys.setdlopenflags(_dlopenflags|_RTLD_GLOBAL)
-# ----------------------------------------------------------------
-
-
 # import swig generated symbols into the dsd namespace
-from dsd_swig import *
+try:
+	# this might fail if the module is python-only
+	from dsd_swig import *
+except ImportError:
+	pass
 
 # import any pure python here
 #
-
-# ----------------------------------------------------------------
-# Tail of workaround
-if _RTLD_GLOBAL != 0:
-    sys.setdlopenflags(_dlopenflags)      # Restore original flags
-# ----------------------------------------------------------------

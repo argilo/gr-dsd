@@ -17,6 +17,8 @@
 
 #include "dsd.h"
 
+#include <pthread.h>
+
 int
 getSymbol (dsd_opts * opts, dsd_state * state, int have_sync)
 {

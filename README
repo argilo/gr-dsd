@@ -1,4 +1,4 @@
-# Copyright 2012-2014 Clayton Smith
+# Copyright 2012-2016 Clayton Smith
 #
 # This file is part of gr-dsd
 #
@@ -39,7 +39,9 @@ Dependencies:
 
 Build instructions:
 
-    cmake .
+    mkdir build
+    cd build
+    cmake ..
     make
     sudo make install
     sudo ldconfig
@@ -47,7 +49,7 @@ Build instructions:
 If your GNU Radio is installed in /usr (rather than /usr/local), then
 replace the first line above with:
 
-    cmake -DCMAKE_INSTALL_PREFIX=/usr .
+    cmake -DCMAKE_INSTALL_PREFIX=/usr ..
 
 After running the above commands, "DSD Block" should appear under the
 "DSD" category in GNU Radio Companion, and "block_ff" will be available

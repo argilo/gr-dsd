@@ -1,4 +1,4 @@
-# Copyright 2011 Free Software Foundation, Inc.
+# Copyright 2011,2012 Free Software Foundation, Inc.
 #
 # This file is part of GNU Radio
 #
@@ -21,7 +21,6 @@
 # Install public header files
 ########################################################################
 install(FILES
-    dsd_api.h
-    dsd_block_ff.h
-    DESTINATION include/dsd
+    api.h
+    dsd_block_ff.h DESTINATION include/dsd
 )

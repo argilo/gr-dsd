@@ -33,3 +33,11 @@ GR_PYTHON_INSTALL(
     __init__.py
     DESTINATION ${GR_PYTHON_DIR}/dsd
 )
+
+########################################################################
+# Handle the unit tests
+########################################################################
+include(GrTest)
+
+set(GR_TEST_TARGET_DEPS gnuradio-dsd)
+set(GR_TEST_PYTHON_DIRS ${CMAKE_BINARY_DIR}/swig)
