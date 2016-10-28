@@ -34,6 +34,7 @@ Dependencies:
   * libsndfile (libsndfile1-dev package in Ubuntu)
   * BOOST C++ source libraries (libboost-all-dev in Ubuntu)
   * libcppunit-dev
+  * libitpp-dev
   * liblog4cpp5-dev
   * swig
 

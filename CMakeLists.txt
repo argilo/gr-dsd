@@ -146,7 +146,7 @@ endif(DOXYGEN_FOUND)
 include_directories(
     ${CMAKE_SOURCE_DIR}/lib
     ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/dsd
+    ${CMAKE_SOURCE_DIR}/dsd/include
     ${CMAKE_SOURCE_DIR}/mbelib
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}/lib
