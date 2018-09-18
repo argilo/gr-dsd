@@ -1,15 +1,21 @@
 title: gr-dsd
 brief: A GNU Radio wrapper for Digital Speech Decoder (DSD)
-tags: # Tags are arbitrary, but look at CGRAN what other authors are using
-  - sdr
+tags:
+  - DSD
+  - P25
+  - DMR
+  - D-STAR
 author:
   - Clayton Smith <argilo@gmail.com>
 copyright_owner:
-  - Clayton Smith
+  - Clayton Smith <argilo@gmail.com>
+dependencies:
+  - gnuradio (>= 3.7.0)
+  - libsndfile
+  - libitpp
 license: GPLv3
-#repo: https://github.com/argilo/gr-dsd
-#website: <module_website> # If you have a separate project website, put it here
-#icon: <icon_url> # Put a URL to a square image here that will be used as an icon on CGRAN
+repo: https://github.com/argilo/gr-dsd.git
+stable_release: HEAD
 ---
 The goal of this project is to package Digital Speech Decoder (DSD) as
 a GNU Radio block, so that it can be easily used with software radio
