@@ -18,7 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-
 #ifndef INCLUDED_DSD_DSD_BLOCK_FF_H
 #define INCLUDED_DSD_DSD_BLOCK_FF_H
 
@@ -71,3 +70,4 @@ namespace gr {
 } // namespace gr
 
 #endif /* INCLUDED_DSD_DSD_BLOCK_FF_H */
+

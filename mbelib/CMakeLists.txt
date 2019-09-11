@@ -1,9 +1,8 @@
 project(mbe)
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.8)
 
-FILE(GLOB SRCS *.c)
+file(GLOB SRCS *.c)
 
-include_directories("${PROJECT_SOURCE_DIR}")
-
-ADD_LIBRARY(mbe STATIC ${SRCS})
-add_definitions(-fPIC)
+add_library(mbe STATIC ${SRCS})
+target_include_directories(mbe PUBLIC "${PROJECT_SOURCE_DIR}")
+set_property(TARGET mbe PROPERTY POSITION_INDEPENDENT_CODE ON)

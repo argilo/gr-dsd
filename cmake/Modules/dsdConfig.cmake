@@ -22,9 +22,10 @@ FIND_LIBRARY(
           /usr/local/lib64
           /usr/lib
           /usr/lib64
-)
+          )
+
+include("${CMAKE_CURRENT_LIST_DIR}/dsdTarget.cmake")
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(DSD DEFAULT_MSG DSD_LIBRARIES DSD_INCLUDE_DIRS)
 MARK_AS_ADVANCED(DSD_LIBRARIES DSD_INCLUDE_DIRS)
-

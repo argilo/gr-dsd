@@ -30,7 +30,7 @@ tuners.
 
 Dependencies:
 
-  * GNU Radio 3.7
+  * GNU Radio 3.7 or 3.8
   * libsndfile (libsndfile1-dev package in Ubuntu)
   * BOOST C++ source libraries (libboost-all-dev in Ubuntu)
   * libcppunit-dev

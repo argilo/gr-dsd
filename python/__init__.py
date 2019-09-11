@@ -22,13 +22,14 @@
 This is the GNU Radio DSD module. Place your Python package
 description here (python/__init__.py).
 '''
+from __future__ import unicode_literals
 
 # import swig generated symbols into the dsd namespace
 try:
-	# this might fail if the module is python-only
-	from dsd_swig import *
+    # this might fail if the module is python-only
+    from .dsd_swig import *
 except ImportError:
-	pass
+    pass
 
 # import any pure python here
 #

@@ -42,6 +42,7 @@ namespace gr {
         (new dsd_block_ff_impl(frame, mod, uvquality, errorbars, verbosity));
     }
 
+
     /*
      * The private constructor
      */
@@ -323,3 +324,4 @@ namespace gr {
 
   } /* namespace dsd */
 } /* namespace gr */
+
