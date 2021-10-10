@@ -15,7 +15,7 @@ dependencies:
   - libitpp
 license: GPLv3
 repo: https://github.com/argilo/gr-dsd.git
-gr_supported_version: v3.7, v3.8
+gr_supported_version: v3.7, v3.8, v3.9
 stable_release: HEAD
 ---
 The goal of this project is to package Digital Speech Decoder (DSD) as
