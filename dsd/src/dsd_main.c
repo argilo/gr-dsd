@@ -30,6 +30,7 @@
 
 #include <pthread.h>
 
+int exitflag = 0;
 
 int
 comp (const void *a, const void *b)
